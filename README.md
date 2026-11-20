@@ -18,7 +18,11 @@ python3 gerar.py --nome "Xiaoshuai" --whatsapp "+86 195 2122 8559" --yupoo "http
 
 No fim ele mostra o link da loja no ar. Opções:
 
-- `--preco 60`: preço único em reais (padrão 52)
+- `--preco 60` e `--preco-jogador 90`: preço da versão torcedor e da versão jogador, em reais (padrão 58 e 87)
+- `--preco-retro 99`: preço das retrô, em reais (padrão: o mesmo da versão torcedor)
+- `--frete 5,4,3`: frete em dólar com 1, 2, 3… camisas; com mais camisas que a lista, é grátis (padrão 5,4,3)
+- `--cotacao 5.8`: reais por dólar, para converter o frete
+- `--logo jin.webp`: imagem no lugar do nome escrito no topo e no rodapé. Fica guardada na pasta da loja, então nas próximas vezes não precisa repetir
 - `--slug outro-nome`: nome da pasta e do projeto na Vercel (padrão: o nome da loja sem acentos)
 - `--sem-publicar`: só monta a pasta, sem publicar
 
@@ -35,7 +39,7 @@ Um catálogo de ~3.600 camisas leva alguns minutos, quase todo o tempo baixando 
 - `gerar.py`: junta tudo, do Yupoo até o link publicado
 - `gerador/yupoo.py`: lê os álbuns do Yupoo e baixa as fotos em WebP de 440px
 - `gerador/classificar.py`: tira time, liga, modelo, temporada e tamanhos do título de cada álbum
-- `modelo/`: as páginas, com marcadores como `{{NOME}}`, `{{WA}}` e `{{PRECO}}`
+- `modelo/`: as páginas, com marcadores como `{{NOME}}` e `{{WA}}`
 - `sites/<loja>/`: cada loja gerada, fora do git por causa das fotos
 
 Para mudar o visual de todas as lojas, edite `modelo/` e gere de novo. Como as fotos já estão baixadas, a segunda vez é rápida.
@@ -43,6 +47,6 @@ Para mudar o visual de todas as lojas, edite `modelo/` e gere de novo. Como as f
 ## Limites
 
 - Liga e modelo saem de palavras-chave nos títulos. Títulos estranhos ou times que o classificador não conhece vão para "Outros".
-- Todas as camisas têm o mesmo preço.
+- Só três preços: torcedor, jogador e retrô (a versão jogador sai do título do álbum). Kit infantil, agasalho, personalização, patch e tamanhos grandes não têm preço próprio.
 - Os textos de entrega, personalização em 48 h e troca grátis são iguais em todas as lojas e não foram combinados com nenhum revendedor.
 - O plano grátis da Vercel tem limites de uso. Se muitas lojas forem para o ar, talvez seja preciso um plano pago ou outra hospedagem.

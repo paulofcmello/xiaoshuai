@@ -37,6 +37,7 @@ def _parse(page):
     out = []
     # categorias põem o título só no <a> e a foto em data-src; a galeria usa alt e src
     for a in re.findall(r'<a\s[^>]*class="album__main".*?</a>', page, re.S):
+        al = re.search(r'href="/albums/(\d+)', a)
         t, s = re.search(r'title="([^"]*)"', a), re.search(r'<img\s[^>]*?\b(?:data-)?src="([^"]+)"', a)
         if not (t and s) or "im_photo_album" in s.group(1):  # placeholder = álbum vazio
             continue
@@ -46,7 +47,7 @@ def _parse(page):
         parts = src.split("?")[0].split("/")
         if len(parts) < 2:
             continue
-        out.append({"t": html.unescape(t.group(1)).strip(), "img": src, "h": parts[-2]})
+        out.append({"t": html.unescape(t.group(1)).strip(), "img": src, "h": parts[-2], "a": al and al.group(1)})
     return out
 
 
@@ -60,6 +61,8 @@ def scrape(url, paginas=None):
             break
         for i in new:
             seen.add(i["h"])
+            al = i.pop("a")
+            i["u"] = al and f"{urlparse(base).scheme}://{urlparse(base).netloc}/albums/{al}?uid=1"
         items += new
         page += 1
     if not items:

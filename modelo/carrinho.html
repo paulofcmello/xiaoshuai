@@ -5,40 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Carrinho — {{NOME}}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter+Tight:wght@400;500;600&family=Noto+Sans+SC:wght@400;600;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=4">
-<style>
-.cartpage{padding:48px 0 96px;min-height:70vh}
-.cartpage h1{font-size:clamp(48px,7vw,96px);margin-bottom:32px}
-.layout{display:grid;grid-template-columns:1fr 360px;gap:48px;align-items:start}
-.items{border-top:1px solid var(--ink)}
-.item{display:grid;grid-template-columns:96px 1fr auto;gap:20px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
-.item img{width:96px;height:96px;object-fit:cover;border-radius:10px;background:#E8EBEE}
-.item h2{font-family:Archivo,"Noto Sans SC",sans-serif;font-stretch:72%;font-weight:800;font-size:24px;line-height:1.1;text-transform:uppercase}
-.item h2 a:hover{text-decoration:underline;text-underline-offset:3px}
-.item p{color:var(--muted);font-size:14px;margin-top:4px}
-.qty{display:flex;align-items:center;gap:4px;margin-top:10px}
-.qty button{width:36px;height:36px;border:1px solid var(--line);background:var(--surface);border-radius:8px;font-weight:600;font-size:16px}
-.qty button:hover{border-color:var(--ink)}
-.qty output{min-width:28px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums}
-.right{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
-.rm{display:block;margin-top:10px;margin-left:auto;background:none;border:0;color:var(--muted);font-size:14px;min-height:32px;text-decoration:underline;text-underline-offset:3px}
-.rm:hover{color:var(--ink)}
-.summary{position:sticky;top:96px;background:var(--surface);border-radius:var(--r);padding:28px}
-.summary .row{display:flex;justify-content:space-between;padding:8px 0;color:var(--muted);font-variant-numeric:tabular-nums}
-.summary .total{border-top:1px solid var(--line);margin-top:8px;padding-top:16px;color:var(--ink);font-weight:600;font-size:18px}
-.summary .total b{font-family:Archivo;font-stretch:72%;font-size:36px;font-weight:800}
-.wa{width:100%;justify-content:center;margin-top:20px;min-height:56px;background:#1F8F4E;border-color:#1F8F4E;color:#fff;font-size:16px}
-.wa:hover{background:#17733E;border-color:#17733E;transform:translateY(-2px)}
-.note{font-size:14px;color:var(--muted);margin-top:12px;min-height:40px}
-.note.ok{color:var(--accent);font-weight:600}
-.empty{padding:48px 0;border-top:1px solid var(--ink)}
-.empty p{color:var(--muted);font-size:18px;margin:0 0 24px}
-@media (max-width:860px){.layout{grid-template-columns:1fr}.summary{position:static}.item{grid-template-columns:72px 1fr auto;gap:14px}.item img{width:72px;height:72px}}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
-<nav><div class="wrap">
+<nav class="top"><div class="wrap">
   <a class="logo" href="index.html">{{LOGO}}</a>
   <div class="links"><a href="index.html#l-brasileirao" data-en="Clubs" data-zh="俱乐部">Clubes</a><a href="index.html#l-selecoes" data-en="National teams" data-zh="国家队">Seleções</a><a href="index.html#loja" data-en="Catalog" data-zh="目录">Catálogo</a></div>
   <a class="cart" href="carrinho.html" aria-current="page"><span id="cartlabel">Carrinho</span> <b id="count">0</b></a>
@@ -50,12 +21,12 @@
 </div></main>
 
 <footer><div class="wrap">
-  <span class="logo" style="font-size:20px;color:var(--ink)">{{LOGO}}</span>
+  <span class="logo">{{LOGO}}</span>
   <span>Mockup de demonstração · Demo · 演示样稿</span>
 </div></footer>
 
 <script>
-const PRICE={{PRECO}}, WA="https://wa.me/{{WA}}";
+const WA="https://wa.me/{{WA}}";
 const lg=(()=>{try{return localStorage.lang||"pt"}catch{return"pt"}})();
 const T=(pt,cn,en)=>lg=="zh"?cn:lg=="en"?(en??pt):pt;
 const brl=v=>"R$ "+v.toLocaleString("pt-BR",{minimumFractionDigits:2});
@@ -70,15 +41,22 @@ let byH={};
 // group identical shirt+size into one line with a quantity
 function lines(){const m=new Map();cart.forEach(c=>{const k=c.h+"|"+c.size;m.set(k,{...c,q:(m.get(k)?.q||0)+1})});return[...m.values()]}
 
-function message(ls,total){
-  return [T("Olá! Quero fazer este pedido pelo site {{NOME}}:","你好！我想在 {{NOME}} 网站下单：","Hi! I'd like to place this order from the {{NOME}} site:"),"",
-    ...ls.map(l=>{const x=byH[l.h];return `• ${l.q}x ${T(x.t,x.t,x.te)}${x.q?" ("+T(x.q,x.q,x.qe)+")":""} — ${T("tamanho","尺码","size")} ${l.size} — ${brl(PRICE*l.q)}`}),
-    "",`${T("Total","合计","Total")}: ${brl(total)} (${cart.length} ${T(cart.length==1?"camisa":"camisas","件",cart.length==1?"shirt":"shirts")})`].join("\n");
+// sempre em inglês: o fornecedor não lê português. WhatsApp só aceita texto (sem fotos nem links com nome), então vai a URL do álbum
+const brlEn=v=>"R$ "+v.toFixed(2);
+// frete em dólar por pedido: FRETE[n-1] para n camisas; acima da lista é grátis
+const COTACAO={{COTACAO}}, FRETE={{FRETE}}, GRATIS=FRETE.length+1, freteUsd=n=>FRETE[n-1]||0, frete=n=>Math.round(freteUsd(n)*COTACAO*100)/100;
+function message(ls,sub){const n=cart.length,f=frete(n);
+  return ["Hi! I'd like to place this order from the {{NOME}} site:","",
+    ...ls.map(l=>{const x=byH[l.h];return `• ${l.q}x ${x.te}${x.qe?" ("+x.qe+")":""} — size ${l.size} — ${brlEn(x.p*l.q)}`+(x.u?`\n   ${x.u}`:"")}),
+    "",`Shirts: ${brlEn(sub)} (${n} ${n==1?"shirt":"shirts"})`,
+    `Shipping: ${f?brlEn(f):`free (${GRATIS}+ shirts)`}`,
+    `Total: ${brlEn(sub+f)}`,
+    `Rate: 1 USD = ${COTACAO} BRL`].join("\n");
 }
 
 function render(){
   $("count").textContent=cart.length;
-  const ls=lines(), total=cart.length*PRICE;
+  const ls=lines(), sub=cart.reduce((s,c)=>s+byH[c.h].p,0), f=frete(cart.length), total=sub+f;
   if(!ls.length){$("app").innerHTML=`<div class="empty"><p>${T("Seu carrinho está vazio. Escolha uma camisa e o tamanho para ela aparecer aqui.","购物车是空的。选择球衣和尺码后会显示在这里。","Your cart is empty. Pick a shirt and a size and it will show up here.")}</p><a class="btn primary" href="index.html#loja">${T("Ver catálogo","查看目录","Browse catalog")}</a></div>`;return}
   $("app").innerHTML=`<div class="layout">
     <div class="items">${ls.map(l=>{const x=byH[l.h];if(!x)return"";return `
@@ -86,13 +64,14 @@ function render(){
         <a href="camisa.html?id=${x.h}"><img src="fotos/all/${x.h}.webp" alt="${x.t}" width="96" height="96"></a>
         <div><h2><a href="camisa.html?id=${x.h}">${T(x.t,x.tz,x.te)}</a></h2><p>${[T(x.q,x.qz,x.qe),T("Tamanho","尺码","Size")+" "+l.size].filter(Boolean).join(" · ")}</p>
           <div class="qty"><button data-a="-" data-k="${l.h}|${l.size}" aria-label="${T("Diminuir","减少","Decrease")}">−</button><output>${l.q}</output><button data-a="+" data-k="${l.h}|${l.size}" aria-label="${T("Aumentar","增加","Increase")}">+</button></div></div>
-        <div class="right">${brl(PRICE*l.q)}<button class="rm" data-a="x" data-k="${l.h}|${l.size}">${T("Remover","删除","Remove")}</button></div>
+        <div class="right">${brl(x.p*l.q)}<button class="rm" data-a="x" data-k="${l.h}|${l.size}">${T("Remover","删除","Remove")}</button></div>
       </div>`}).join("")}</div>
     <aside class="summary">
-      <div class="row"><span>${T("Camisas","球衣","Shirts")}</span><span>${cart.length} × ${brl(PRICE)}</span></div>
-      <div class="row"><span>${T("Frete","运费","Shipping")}</span><span>${T("a combinar","另议","to be agreed")}</span></div>
+      <div class="row"><span>${T("Camisas","球衣","Shirts")} (${cart.length})</span><span>${brl(sub)}</span></div>
+      <div class="row"><span>${T("Frete","运费","Shipping")}</span><span>${f?brl(f):T("Grátis","免运费","Free")}</span></div>
+      ${cart.length<GRATIS?`<p class="note" style="min-height:0;margin:0 0 4px">${T(`Frete grátis a partir de ${GRATIS} camisas`,`满 ${GRATIS} 件免运费`,`Free shipping from ${GRATIS} shirts`)}</p>`:""}
       <div class="row total"><span>${T("Total","合计","Total")}</span><b>${brl(total)}</b></div>
-      <a class="btn wa" id="wa" href="${WA}?text=${encodeURIComponent(message(ls,total))}" target="_blank" rel="noopener">${T("Falar com fornecedor","联系供应商","Message the seller")}</a>
+      <a class="btn wa" id="wa" href="${WA}?text=${encodeURIComponent(message(ls,sub))}" target="_blank" rel="noopener">${T("Falar com fornecedor","联系供应商","Message the seller")}</a>
       <p class="note">${T("Abre o WhatsApp com seu pedido já escrito. É só enviar.","将打开 WhatsApp，订单已自动填写，直接发送即可。","Opens WhatsApp with your order already written. Just hit send.")}</p>
     </aside></div>`;
 }
