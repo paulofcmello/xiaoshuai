@@ -45,7 +45,7 @@ legend{font-weight:600;margin-bottom:12px;display:flex;justify-content:space-bet
 <body>
 <nav><div class="wrap">
   <a class="logo" href="index.html">{{LOGO}}</a>
-  <div class="links"><a href="index.html#l-brasileirao">Clubes</a><a href="index.html#l-selecoes">Seleções</a><a href="index.html#personalize">Personalizar</a></div>
+  <div class="links"><a href="index.html#l-brasileirao" data-en="Clubs" data-zh="俱乐部">Clubes</a><a href="index.html#l-selecoes" data-en="National teams" data-zh="国家队">Seleções</a><a href="index.html#personalize" data-en="Customize" data-zh="定制">Personalizar</a></div>
   <a class="cart" href="carrinho.html"><span id="cartlabel">Carrinho</span> <b id="count">0</b></a>
 </div></nav>
 
@@ -53,56 +53,57 @@ legend{font-weight:600;margin-bottom:12px;display:flex;justify-content:space-bet
 
 <footer><div class="wrap">
   <span class="logo" style="font-size:20px;color:var(--ink)">{{LOGO}}</span>
-  <span>Mockup de demonstração · 演示样稿</span>
+  <span>Mockup de demonstração · Demo · 演示样稿</span>
 </div></footer>
 
 <script>
 const PRICE={{PRECO}};
-const zh=(()=>{try{return localStorage.lang=="zh"}catch{return false}})();
-const T=(pt,cn)=>zh?cn:pt;
-const L={brasileirao:["Brasileirão","巴西甲级联赛"],premier:["Premier League","英超"],laliga:["La Liga","西甲"],seriea:["Serie A","意甲"],bundesliga:["Bundesliga","德甲"],ligue1:["Ligue 1","法甲"],portugal:["Liga Portugal","葡超"],argentina:["Argentina","阿根廷联赛"],"liga-mx":["Liga MX","墨西哥联赛"],mls:["MLS","美职联"],saudi:["Saudi Pro League","沙特联赛"],"outras-ligas":["Outras ligas","其他联赛"],selecoes:["Seleções","国家队"],retro:["Retrô","复古球衣"],outros:["Outros","其他"]};
+const lg=(()=>{try{return localStorage.lang||"pt"}catch{return"pt"}})();
+const T=(pt,cn,en)=>lg=="zh"?cn:lg=="en"?(en??pt):pt;
+const L={brasileirao:["Brasileirão","巴西甲级联赛"],premier:["Premier League","英超"],laliga:["La Liga","西甲"],seriea:["Serie A","意甲"],bundesliga:["Bundesliga","德甲"],ligue1:["Ligue 1","法甲"],portugal:["Liga Portugal","葡超"],argentina:["Argentina","阿根廷联赛"],"liga-mx":["Liga MX","墨西哥联赛"],mls:["MLS","美职联"],saudi:["Saudi Pro League","沙特联赛"],"outras-ligas":["Outras ligas","其他联赛","Other leagues"],selecoes:["Seleções","国家队","National teams"],retro:["Retrô","复古球衣","Retro"],outros:["Outros","其他","Other"]};
 const read=()=>{try{return JSON.parse(localStorage.cart||"[]")}catch{return[]}};
 let cart=read();
 const $=id=>document.getElementById(id);
 $("count").textContent=cart.length;
-$("cartlabel").textContent=T("Carrinho","购物车");
-if(zh)document.documentElement.lang="zh-CN";
+$("cartlabel").textContent=T("Carrinho","购物车","Cart");
+document.documentElement.lang={pt:"pt-BR",en:"en",zh:"zh-CN"}[lg]||"pt-BR";
+if(lg!="pt")document.querySelectorAll("[data-zh]").forEach(e=>e.innerHTML=e.dataset[lg]??e.innerHTML);
 
 const id=new URLSearchParams(location.search).get("id");
 fetch("catalog.json").then(r=>r.json()).then(all=>{
   const x=all.find(i=>i.h==id);
-  if(!x){$("app").innerHTML=`<div class="wrap missing"><h1 style="font-size:56px">${T("Camisa não encontrada","找不到这件球衣")}</h1><p style="margin:16px 0 28px;color:var(--muted)">${T("O link pode estar errado ou a camisa saiu do catálogo.","链接可能有误，或该球衣已下架。")}</p><a class="btn primary" href="index.html#loja">${T("Voltar ao catálogo","返回目录")}</a></div>`;return}
-  const lg=T(...L[x.l]);
-  document.title=`${x.t} — {{NOME}}`;
+  if(!x){$("app").innerHTML=`<div class="wrap missing"><h1 style="font-size:56px">${T("Camisa não encontrada","找不到这件球衣","Shirt not found")}</h1><p style="margin:16px 0 28px;color:var(--muted)">${T("O link pode estar errado ou a camisa saiu do catálogo.","链接可能有误，或该球衣已下架。","The link may be wrong or the shirt is no longer in the catalog.")}</p><a class="btn primary" href="index.html#loja">${T("Voltar ao catálogo","返回目录","Back to catalog")}</a></div>`;return}
+  const lgn=T(...L[x.l]);
+  document.title=`${T(x.t,x.tz,x.te)} — {{NOME}}`;
   const rel=all.filter(i=>i.l==x.l&&i.h!=x.h);
   const start=Math.max(0,all.indexOf(x)%Math.max(1,rel.length-6));
   $("app").innerHTML=`
   <section class="pdp"><div class="wrap">
-    <a class="crumb" href="index.html#l-${x.l}">← ${lg}</a>
+    <a class="crumb" href="index.html#l-${x.l}">← ${lgn}</a>
     <div class="grid2">
       <div class="shot"><img src="fotos/all/${x.h}.webp" alt="${x.t}" width="440" height="440"></div>
       <div class="buy">
-        <h1>${T(x.t,x.tz)}</h1>
-        <p class="kit">${T(x.q,x.qz)||(x.t.startsWith("Camisa")?T("Versão torcedor","球迷版"):"")}</p>
+        <h1>${T(x.t,x.tz,x.te)}</h1>
+        <p class="kit">${T(x.q,x.qz,x.qe)||(x.t.startsWith("Camisa")?T("Versão torcedor","球迷版","Fan version"):"")}</p>
         <p class="big">R$ ${PRICE}</p>
-        <p class="pix">${T("ou R$ 49,40 no Pix","Pix 付款 R$ 49,40")}</p>
+        <p class="pix">${T("ou R$ 49,40 no Pix","Pix 付款 R$ 49,40","or R$ 49.40 with Pix")}</p>
         <form id="f">
-          <fieldset><legend>${T("Tamanho","尺码")}<span id="sel" style="color:var(--muted);font-weight:500"></span></legend>
+          <fieldset><legend>${T("Tamanho","尺码","Size")}<span id="sel" style="color:var(--muted);font-weight:500"></span></legend>
           <div class="sizes">${x.s.map(s=>`<label><input type="radio" name="size" value="${s}"><span>${s}</span></label>`).join("")}</div></fieldset>
-          <button class="btn primary addbtn" id="add" aria-disabled="true" aria-describedby="hint">${T("Adicionar ao carrinho","加入购物车")}</button>
-          <p class="hint" id="hint" aria-live="polite">${T("Escolha um tamanho para continuar","请先选择尺码")}</p>
+          <button class="btn primary addbtn" id="add" aria-disabled="true" aria-describedby="hint">${T("Adicionar ao carrinho","加入购物车","Add to cart")}</button>
+          <p class="hint" id="hint" aria-live="polite">${T("Escolha um tamanho para continuar","请先选择尺码","Choose a size to continue")}</p>
         </form>
         <div class="perks">
-          <p><b>${T("Entrega","配送")}</b><span>${T("Até 7 dias úteis, todo o Brasil","7 个工作日内送达巴西全境")}</span></p>
-          <p><b>${T("Personalização","定制")}</b><span>${T("Nome e número em 48 h","48 小时内印制名字和号码")}</span></p>
-          <p><b>${T("Troca","退换")}</b><span>${T("Troca de tamanho grátis em 7 dias","7 天内免费换码")}</span></p>
+          <p><b>${T("Entrega","配送","Delivery")}</b><span>${T("Até 7 dias úteis, todo o Brasil","7 个工作日内送达巴西全境","Within 7 business days, all of Brazil")}</span></p>
+          <p><b>${T("Personalização","定制","Customization")}</b><span>${T("Nome e número em 48 h","48 小时内印制名字和号码","Name and number in 48 h")}</span></p>
+          <p><b>${T("Troca","退换","Exchange")}</b><span>${T("Troca de tamanho grátis em 7 dias","7 天内免费换码","Free size exchange within 7 days")}</span></p>
         </div>
       </div>
     </div>
   </div></section>
   ${rel.length?`<section class="related"><div class="wrap">
-    <div class="head"><h2>${T("Mais da "+lg,"更多"+lg)}</h2><a class="btn ghost" href="index.html#l-${x.l}">${T("Ver todas","查看全部")} (${rel.length+1})</a></div>
-    <div class="grid">${rel.slice(start,start+6).map(r=>`<a class="card" href="camisa.html?id=${r.h}"><div class="pic"><img src="fotos/all/${r.h}.webp" alt="${r.n} ${r.k}" loading="lazy" width="440" height="440"></div><div class="info"><h3>${T(r.t,r.tz)}</h3>${T(r.q,r.qz)?`<div class="meta">${T(r.q,r.qz)}</div>`:""}<div class="price">R$ ${PRICE}</div></div></a>`).join("")}</div>
+    <div class="head"><h2>${T("Mais da "+lgn,"更多"+lgn,"More from "+lgn)}</h2><a class="btn ghost" href="index.html#l-${x.l}">${T("Ver todas","查看全部","See all")} (${rel.length+1})</a></div>
+    <div class="grid">${rel.slice(start,start+6).map(r=>`<a class="card" href="camisa.html?id=${r.h}"><div class="pic"><img src="fotos/all/${r.h}.webp" alt="${r.n} ${r.k}" loading="lazy" width="440" height="440"></div><div class="info"><h3>${T(r.t,r.tz,r.te)}</h3>${T(r.q,r.qz,r.qe)?`<div class="meta">${T(r.q,r.qz,r.qe)}</div>`:""}<div class="price">R$ ${PRICE}</div></div></a>`).join("")}</div>
   </div></section>`:""}`;
 
   const f=$("f"),add=$("add"),hint=$("hint");
@@ -110,10 +111,10 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
   f.addEventListener("change",e=>{size=e.target.value;$("sel").textContent=size;add.setAttribute("aria-disabled","false");hint.className="hint";hint.textContent=""});
   f.addEventListener("submit",e=>{
     e.preventDefault();
-    if(!size){hint.className="hint";hint.textContent=T("Escolha um tamanho para continuar","请先选择尺码");f.querySelector("input").focus();return}
+    if(!size){hint.className="hint";hint.textContent=T("Escolha um tamanho para continuar","请先选择尺码","Choose a size to continue");f.querySelector("input").focus();return}
     cart.push({h:x.h,size});try{localStorage.cart=JSON.stringify(cart)}catch{}
     $("count").textContent=cart.length;
-    hint.className="hint ok";hint.textContent=T(`${x.t} (${size}) adicionada ao carrinho`,`${x.tz}（${size}）已加入购物车`);
+    hint.className="hint ok";hint.textContent=T(`${x.t} (${size}) adicionada ao carrinho`,`${x.tz}（${size}）已加入购物车`,`${x.te} (${size}) added to cart`);
   });
 });
 </script>

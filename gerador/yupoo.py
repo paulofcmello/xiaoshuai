@@ -24,6 +24,9 @@ def _get(url, headers=UA, timeout=30):
 
 def _base(url):
     u = urlparse(url if "//" in url else "https://" + url)
+    m = re.search(r"/categories/(\d+)", u.path)
+    if m:  # .../categories/<id>: só essa categoria
+        return f"{u.scheme}://{u.netloc}/categories/{m.group(1)}?isSubCate=false"
     m = re.search(r"/photos/([^/?#]+)", u.path)
     if m:  # .../photos/<id>/albums
         return f"{u.scheme}://{u.netloc}/photos/{m.group(1)}/albums?tab=gallery"
@@ -32,11 +35,10 @@ def _base(url):
 
 def _parse(page):
     out = []
-    for tag in re.findall(r"<img\s[^>]*>", page):
-        if 'data-type="photo"' not in tag:
-            continue
-        a, s = re.search(r'alt="([^"]*)"', tag), re.search(r'src="([^"]+)"', tag)
-        if not (a and s):
+    # categorias põem o título só no <a> e a foto em data-src; a galeria usa alt e src
+    for a in re.findall(r'<a\s[^>]*class="album__main".*?</a>', page, re.S):
+        t, s = re.search(r'title="([^"]*)"', a), re.search(r'<img\s[^>]*?\b(?:data-)?src="([^"]+)"', a)
+        if not (t and s) or "im_photo_album" in s.group(1):  # placeholder = álbum vazio
             continue
         src = s.group(1)
         if src.startswith("//"):
@@ -44,17 +46,17 @@ def _parse(page):
         parts = src.split("?")[0].split("/")
         if len(parts) < 2:
             continue
-        out.append({"t": html.unescape(a.group(1)).strip(), "img": src, "h": parts[-2]})
+        out.append({"t": html.unescape(t.group(1)).strip(), "img": src, "h": parts[-2]})
     return out
 
 
-def scrape(url):
+def scrape(url, paginas=None):
     base = _base(url)
     seen, items = set(), []
     page = 1
     while True:
         new = [i for i in _parse(_get(f"{base}&page={page}").decode("utf-8", "replace")) if i["h"] not in seen]
-        if not new:
+        if not new or (paginas and page > paginas):
             break
         for i in new:
             seen.add(i["h"])

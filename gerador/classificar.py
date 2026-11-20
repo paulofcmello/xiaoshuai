@@ -7,6 +7,9 @@ MAIN = [("Jacket", "Jaqueta", "夹克"), ("Hoodie", "Moletom", "卫衣"), ("Polo
         ("Retro", "Camisa Retrô", "复古球衣"), ("Special", "Camisa Edição Especial", "特别版球衣"),
         ("Fourth", "Camisa 4", "第四客场球衣"), ("Third", "Camisa 3", "第三客场球衣"),
         ("Away", "Camisa 2", "客场球衣"), ("Home", "Camisa 1", "主场球衣")]
+EN = {"Polo": "Polo Shirt", "GK": "Goalkeeper Jersey", "Training": "Training Jersey", "Retro": "Retro Jersey",
+      "Special": "Special Edition Jersey", "Fourth": "Fourth Jersey", "Third": "Third Jersey",
+      "Away": "Away Jersey", "Home": "Home Jersey"}  # Jacket/Hoodie: a própria chave
 QUAL = [("Player", "Jogador", "球员版"), ("Kids", "Infantil", "儿童"), ("Women", "Feminina", "女款"),
         ("Long sleeve", "Manga Longa", "长袖"), ("World Cup", "Copa do Mundo", "世界杯")]
 
@@ -776,13 +779,14 @@ def _build(title, n, league, forced_retro=False):
     found = {k: _has(KIT_RE[k], ts) for k, *_ in MAIN}
     retro = forced_retro or found["Retro"] or (year is not None and year < 2015)
     found["Retro"] = retro
-    main = next(((pt, zh) for k, pt, zh in MAIN if found[k]), ("Camisa", "球衣"))
-    qs = [(pt, zh) for k, pt, zh in QUAL if qual[k]]
+    main = next(((pt, zh, EN.get(k, k)) for k, pt, zh in MAIN if found[k]), ("Camisa", "球衣", "Jersey"))
+    qs = [(pt, zh, k.title()) for k, pt, zh in QUAL if qual[k]]
     return {
         "n": n, "l": "retro" if retro else league,
         "t": f"{main[0]} {n}" + (f" {season}" if season else ""),
         "tz": f"{n} " + (season + " " if season else "") + main[1],
-        "q": " · ".join(p for p, _ in qs), "qz": " · ".join(z for _, z in qs),
+        "te": f"{n} " + (season + " " if season else "") + main[2],
+        "q": " · ".join(q[0] for q in qs), "qz": " · ".join(q[1] for q in qs), "qe": " · ".join(q[2] for q in qs),
         "s": _sizes(title, kids),
     }
 

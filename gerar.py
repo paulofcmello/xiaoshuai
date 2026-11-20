@@ -4,13 +4,14 @@
     python3 gerar.py --nome "Xiaoshuai" --whatsapp "+86 195 2122 8559" --yupoo https://x.yupoo.com/photos/1022669895/albums
 """
 import argparse, json, re, subprocess, sys, unicodedata
+from collections import Counter
 from pathlib import Path
 
 from gerador import yupoo, classificar
 
 RAIZ = Path(__file__).resolve().parent
 PAGINAS = ["index.html", "camisa.html", "carrinho.html", "style.css"]
-CAMPOS = ["h", "n", "l", "t", "tz", "q", "qz", "s"]
+CAMPOS = ["h", "n", "l", "t", "tz", "te", "q", "qz", "qe", "s"]
 
 
 def slug(nome):
@@ -52,7 +53,7 @@ def montar(saida, nome, whatsapp, preco, cat):
         "{{TOTAL_ZH}}": numero(total, ","),
         "{{MODELOS}}": numero(modelos, "."),
         "{{MODELOS_ZH}}": numero(modelos, ","),
-        "{{HERO}}": json.dumps({"n": d["t"], "z": d["tz"], "img": f"fotos/all/{d['h']}.webp"}, ensure_ascii=False),
+        "{{HERO}}": json.dumps({"n": d["t"], "z": d["tz"], "e": d["te"], "img": f"fotos/all/{d['h']}.webp"}, ensure_ascii=False),
     }
     for p in PAGINAS:
         s = (RAIZ / "modelo" / p).read_text()
@@ -63,6 +64,19 @@ def montar(saida, nome, whatsapp, preco, cat):
         (saida / p).write_text(s)
     (saida / "catalog.json").write_text(json.dumps([{k: x[k] for k in CAMPOS} for x in cat], ensure_ascii=False, separators=(",", ":")))
     (saida / ".vercelignore").write_text("_albuns.json\n")
+
+
+def amostra(url, n, vistos):
+    """Até n álbuns da 1ª página de uma categoria: só da liga dominante, um por time primeiro."""
+    itens = [i for i in yupoo.scrape(url, paginas=1) if i["h"] not in vistos]
+    cl = classificar.classify_all(itens)
+    liga = Counter(c["l"] for c in cl if c["l"] != "outros").most_common(1)
+    ok = [(i, c) for i, c in zip(itens, cl) if liga and c["l"] == liga[0][0]]
+    times, primeiro, resto = set(), [], []
+    for i, c in ok:
+        (resto if c["n"] in times else primeiro).append(i)
+        times.add(c["n"])
+    return (primeiro + resto)[:n]
 
 
 def publicar(saida, nome_projeto):
@@ -80,6 +94,8 @@ def main():
     ap.add_argument("--nome", required=True, help="nome da loja, ex.: Xiaoshuai")
     ap.add_argument("--whatsapp", required=True, help="número com DDI, ex.: +86 195 2122 8559")
     ap.add_argument("--yupoo", required=True, help="link da loja no Yupoo")
+    ap.add_argument("--extra", nargs=2, action="append", metavar=("LINK", "N"),
+                    help="mais N camisas de outra categoria do Yupoo (pode repetir)")
     ap.add_argument("--preco", type=int, default=52, help="preço único em reais (padrão 52)")
     ap.add_argument("--slug", help="nome da pasta e do projeto na Vercel (padrão: a partir do nome)")
     ap.add_argument("--sem-publicar", action="store_true", help="só gera a pasta, não publica")
@@ -94,6 +110,10 @@ def main():
 
     print(f"1/4 Lendo o Yupoo: {a.yupoo}")
     itens = yupoo.scrape(a.yupoo)
+    for url, n in a.extra or []:
+        mais = amostra(url, int(n), {i["h"] for i in itens})
+        print(f"    + {len(mais)} de {url}")
+        itens += mais
     (saida / "_albuns.json").write_text(json.dumps(itens, ensure_ascii=False))
     print(f"    {len(itens)} álbuns")
 

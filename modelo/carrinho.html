@@ -40,7 +40,7 @@
 <body>
 <nav><div class="wrap">
   <a class="logo" href="index.html">{{LOGO}}</a>
-  <div class="links"><a href="index.html#l-brasileirao">Clubes</a><a href="index.html#l-selecoes">Seleções</a><a href="index.html#loja">Catálogo</a></div>
+  <div class="links"><a href="index.html#l-brasileirao" data-en="Clubs" data-zh="俱乐部">Clubes</a><a href="index.html#l-selecoes" data-en="National teams" data-zh="国家队">Seleções</a><a href="index.html#loja" data-en="Catalog" data-zh="目录">Catálogo</a></div>
   <a class="cart" href="carrinho.html" aria-current="page"><span id="cartlabel">Carrinho</span> <b id="count">0</b></a>
 </div></nav>
 
@@ -51,17 +51,18 @@
 
 <footer><div class="wrap">
   <span class="logo" style="font-size:20px;color:var(--ink)">{{LOGO}}</span>
-  <span>Mockup de demonstração · 演示样稿</span>
+  <span>Mockup de demonstração · Demo · 演示样稿</span>
 </div></footer>
 
 <script>
 const PRICE={{PRECO}}, WA="https://wa.me/{{WA}}";
-const zh=(()=>{try{return localStorage.lang=="zh"}catch{return false}})();
-const T=(pt,cn)=>zh?cn:pt;
+const lg=(()=>{try{return localStorage.lang||"pt"}catch{return"pt"}})();
+const T=(pt,cn,en)=>lg=="zh"?cn:lg=="en"?(en??pt):pt;
 const brl=v=>"R$ "+v.toLocaleString("pt-BR",{minimumFractionDigits:2});
 const $=id=>document.getElementById(id);
-if(zh)document.documentElement.lang="zh-CN";
-$("cartlabel").textContent=T("Carrinho","购物车");$("title").textContent=T("Seu carrinho","购物车");
+document.documentElement.lang={pt:"pt-BR",en:"en",zh:"zh-CN"}[lg]||"pt-BR";
+if(lg!="pt")document.querySelectorAll("[data-zh]").forEach(e=>e.innerHTML=e.dataset[lg]??e.innerHTML);
+$("cartlabel").textContent=T("Carrinho","购物车","Cart");$("title").textContent=T("Seu carrinho","购物车","Your cart");
 let cart=(()=>{try{return JSON.parse(localStorage.cart||"[]")}catch{return[]}})();
 const save=()=>{try{localStorage.cart=JSON.stringify(cart)}catch{}};
 let byH={};
@@ -70,29 +71,29 @@ let byH={};
 function lines(){const m=new Map();cart.forEach(c=>{const k=c.h+"|"+c.size;m.set(k,{...c,q:(m.get(k)?.q||0)+1})});return[...m.values()]}
 
 function message(ls,total){
-  return [T("Olá! Quero fazer este pedido pelo site {{NOME}}:","你好！我想在 {{NOME}} 网站下单："),"",
-    ...ls.map(l=>{const x=byH[l.h];return `• ${l.q}x ${x.t}${x.q?" ("+x.q+")":""} — ${T("tamanho","尺码")} ${l.size} — ${brl(PRICE*l.q)}`}),
-    "",`${T("Total","合计")}: ${brl(total)} (${cart.length} ${T(cart.length==1?"camisa":"camisas","件")})`].join("\n");
+  return [T("Olá! Quero fazer este pedido pelo site {{NOME}}:","你好！我想在 {{NOME}} 网站下单：","Hi! I'd like to place this order from the {{NOME}} site:"),"",
+    ...ls.map(l=>{const x=byH[l.h];return `• ${l.q}x ${T(x.t,x.t,x.te)}${x.q?" ("+T(x.q,x.q,x.qe)+")":""} — ${T("tamanho","尺码","size")} ${l.size} — ${brl(PRICE*l.q)}`}),
+    "",`${T("Total","合计","Total")}: ${brl(total)} (${cart.length} ${T(cart.length==1?"camisa":"camisas","件",cart.length==1?"shirt":"shirts")})`].join("\n");
 }
 
 function render(){
   $("count").textContent=cart.length;
   const ls=lines(), total=cart.length*PRICE;
-  if(!ls.length){$("app").innerHTML=`<div class="empty"><p>${T("Seu carrinho está vazio. Escolha uma camisa e o tamanho para ela aparecer aqui.","购物车是空的。选择球衣和尺码后会显示在这里。")}</p><a class="btn primary" href="index.html#loja">${T("Ver catálogo","查看目录")}</a></div>`;return}
+  if(!ls.length){$("app").innerHTML=`<div class="empty"><p>${T("Seu carrinho está vazio. Escolha uma camisa e o tamanho para ela aparecer aqui.","购物车是空的。选择球衣和尺码后会显示在这里。","Your cart is empty. Pick a shirt and a size and it will show up here.")}</p><a class="btn primary" href="index.html#loja">${T("Ver catálogo","查看目录","Browse catalog")}</a></div>`;return}
   $("app").innerHTML=`<div class="layout">
     <div class="items">${ls.map(l=>{const x=byH[l.h];if(!x)return"";return `
       <div class="item">
         <a href="camisa.html?id=${x.h}"><img src="fotos/all/${x.h}.webp" alt="${x.t}" width="96" height="96"></a>
-        <div><h2><a href="camisa.html?id=${x.h}">${T(x.t,x.tz)}</a></h2><p>${[T(x.q,x.qz),T("Tamanho","尺码")+" "+l.size].filter(Boolean).join(" · ")}</p>
-          <div class="qty"><button data-a="-" data-k="${l.h}|${l.size}" aria-label="${T("Diminuir","减少")}">−</button><output>${l.q}</output><button data-a="+" data-k="${l.h}|${l.size}" aria-label="${T("Aumentar","增加")}">+</button></div></div>
-        <div class="right">${brl(PRICE*l.q)}<button class="rm" data-a="x" data-k="${l.h}|${l.size}">${T("Remover","删除")}</button></div>
+        <div><h2><a href="camisa.html?id=${x.h}">${T(x.t,x.tz,x.te)}</a></h2><p>${[T(x.q,x.qz,x.qe),T("Tamanho","尺码","Size")+" "+l.size].filter(Boolean).join(" · ")}</p>
+          <div class="qty"><button data-a="-" data-k="${l.h}|${l.size}" aria-label="${T("Diminuir","减少","Decrease")}">−</button><output>${l.q}</output><button data-a="+" data-k="${l.h}|${l.size}" aria-label="${T("Aumentar","增加","Increase")}">+</button></div></div>
+        <div class="right">${brl(PRICE*l.q)}<button class="rm" data-a="x" data-k="${l.h}|${l.size}">${T("Remover","删除","Remove")}</button></div>
       </div>`}).join("")}</div>
     <aside class="summary">
-      <div class="row"><span>${T("Camisas","球衣")}</span><span>${cart.length} × ${brl(PRICE)}</span></div>
-      <div class="row"><span>${T("Frete","运费")}</span><span>${T("a combinar","另议")}</span></div>
-      <div class="row total"><span>${T("Total","合计")}</span><b>${brl(total)}</b></div>
-      <a class="btn wa" id="wa" href="${WA}?text=${encodeURIComponent(message(ls,total))}" target="_blank" rel="noopener">${T("Falar com fornecedor","联系供应商")}</a>
-      <p class="note">${T("Abre o WhatsApp com seu pedido já escrito. É só enviar.","将打开 WhatsApp，订单已自动填写，直接发送即可。")}</p>
+      <div class="row"><span>${T("Camisas","球衣","Shirts")}</span><span>${cart.length} × ${brl(PRICE)}</span></div>
+      <div class="row"><span>${T("Frete","运费","Shipping")}</span><span>${T("a combinar","另议","to be agreed")}</span></div>
+      <div class="row total"><span>${T("Total","合计","Total")}</span><b>${brl(total)}</b></div>
+      <a class="btn wa" id="wa" href="${WA}?text=${encodeURIComponent(message(ls,total))}" target="_blank" rel="noopener">${T("Falar com fornecedor","联系供应商","Message the seller")}</a>
+      <p class="note">${T("Abre o WhatsApp com seu pedido já escrito. É só enviar.","将打开 WhatsApp，订单已自动填写，直接发送即可。","Opens WhatsApp with your order already written. Just hit send.")}</p>
     </aside></div>`;
 }
 
