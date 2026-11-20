@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camisa — {{NOME}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter+Tight:wght@400;500;600&family=Noto+Sans+SC:wght@400;600;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=4">
+<style>
+.pdp{padding:40px 0 88px}
+.crumb{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-weight:500;color:var(--muted);margin-bottom:16px}
+.crumb:hover{color:var(--ink)}
+.pdp .wrap>.grid2{display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:start}
+.shot{position:relative;aspect-ratio:1;border-radius:var(--r);overflow:hidden;background:#E8EBEE}
+.shot img{width:100%;height:100%;object-fit:cover}
+.buy{position:sticky;top:96px}
+.buy h1{font-size:clamp(44px,5.5vw,76px);margin-bottom:12px;text-wrap:balance}
+.buy .kit{color:var(--muted);font-size:17px}
+.buy .big{font-family:Archivo;font-stretch:72%;font-weight:800;font-size:40px;margin:28px 0 4px;font-variant-numeric:tabular-nums}
+.buy .pix{color:var(--muted);font-size:15px}
+fieldset{border:0;padding:0;margin:32px 0 0}
+legend{font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between;width:100%}
+.sizes{display:flex;flex-wrap:wrap;gap:8px}
+.sizes label{position:relative}
+.sizes input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.sizes span{display:grid;place-items:center;min-width:56px;height:48px;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-weight:600;font-variant-numeric:tabular-nums;transition:border-color .15s,background .15s,color .15s}
+.sizes label:hover span{border-color:var(--ink)}
+.sizes input:checked+span{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.sizes input:focus-visible+span{outline:2px solid var(--accent);outline-offset:3px}
+.addbtn{width:100%;justify-content:center;margin-top:24px;min-height:56px;font-size:16px}
+.addbtn[aria-disabled=true]{opacity:.45;cursor:not-allowed}
+.addbtn[aria-disabled=true]:hover{background:var(--ink);border-color:var(--ink);transform:none}
+.hint{min-height:24px;margin-top:10px;font-size:14px;color:var(--muted)}
+.hint.ok{color:var(--accent);font-weight:600}
+.perks{margin-top:28px;border-top:1px solid var(--line)}
+.perks p{padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;display:flex;justify-content:space-between;gap:16px}
+.perks b{font-weight:600}
+.related{padding:72px 0 96px;border-top:1px solid var(--line)}
+.related .head h2{font-size:clamp(32px,4vw,48px)}
+.missing{padding:120px 0;text-align:center}
+@media (max-width:820px){.pdp .wrap>.grid2{grid-template-columns:1fr;gap:28px}.buy{position:static}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="index.html">{{LOGO}}</a>
+  <div class="links"><a href="index.html#l-brasileirao">Clubes</a><a href="index.html#l-selecoes">Seleções</a><a href="index.html#personalize">Personalizar</a></div>
+  <a class="cart" href="carrinho.html"><span id="cartlabel">Carrinho</span> <b id="count">0</b></a>
+</div></nav>
+
+<main id="app"></main>
+
+<footer><div class="wrap">
+  <span class="logo" style="font-size:20px;color:var(--ink)">{{LOGO}}</span>
+  <span>Mockup de demonstração · 演示样稿</span>
+</div></footer>
+
+<script>
+const PRICE={{PRECO}};
+const zh=(()=>{try{return localStorage.lang=="zh"}catch{return false}})();
+const T=(pt,cn)=>zh?cn:pt;
+const L={brasileirao:["Brasileirão","巴西甲级联赛"],premier:["Premier League","英超"],laliga:["La Liga","西甲"],seriea:["Serie A","意甲"],bundesliga:["Bundesliga","德甲"],ligue1:["Ligue 1","法甲"],portugal:["Liga Portugal","葡超"],argentina:["Argentina","阿根廷联赛"],"liga-mx":["Liga MX","墨西哥联赛"],mls:["MLS","美职联"],saudi:["Saudi Pro League","沙特联赛"],"outras-ligas":["Outras ligas","其他联赛"],selecoes:["Seleções","国家队"],retro:["Retrô","复古球衣"],outros:["Outros","其他"]};
+const read=()=>{try{return JSON.parse(localStorage.cart||"[]")}catch{return[]}};
+let cart=read();
+const $=id=>document.getElementById(id);
+$("count").textContent=cart.length;
+$("cartlabel").textContent=T("Carrinho","购物车");
+if(zh)document.documentElement.lang="zh-CN";
+
+const id=new URLSearchParams(location.search).get("id");
+fetch("catalog.json").then(r=>r.json()).then(all=>{
+  const x=all.find(i=>i.h==id);
+  if(!x){$("app").innerHTML=`<div class="wrap missing"><h1 style="font-size:56px">${T("Camisa não encontrada","找不到这件球衣")}</h1><p style="margin:16px 0 28px;color:var(--muted)">${T("O link pode estar errado ou a camisa saiu do catálogo.","链接可能有误，或该球衣已下架。")}</p><a class="btn primary" href="index.html#loja">${T("Voltar ao catálogo","返回目录")}</a></div>`;return}
+  const lg=T(...L[x.l]);
+  document.title=`${x.t} — {{NOME}}`;
+  const rel=all.filter(i=>i.l==x.l&&i.h!=x.h);
+  const start=Math.max(0,all.indexOf(x)%Math.max(1,rel.length-6));
+  $("app").innerHTML=`
+  <section class="pdp"><div class="wrap">
+    <a class="crumb" href="index.html#l-${x.l}">← ${lg}</a>
+    <div class="grid2">
+      <div class="shot"><img src="fotos/all/${x.h}.webp" alt="${x.t}" width="440" height="440"></div>
+      <div class="buy">
+        <h1>${T(x.t,x.tz)}</h1>
+        <p class="kit">${T(x.q,x.qz)||(x.t.startsWith("Camisa")?T("Versão torcedor","球迷版"):"")}</p>
+        <p class="big">R$ ${PRICE}</p>
+        <p class="pix">${T("ou R$ 49,40 no Pix","Pix 付款 R$ 49,40")}</p>
+        <form id="f">
+          <fieldset><legend>${T("Tamanho","尺码")}<span id="sel" style="color:var(--muted);font-weight:500"></span></legend>
+          <div class="sizes">${x.s.map(s=>`<label><input type="radio" name="size" value="${s}"><span>${s}</span></label>`).join("")}</div></fieldset>
+          <button class="btn primary addbtn" id="add" aria-disabled="true" aria-describedby="hint">${T("Adicionar ao carrinho","加入购物车")}</button>
+          <p class="hint" id="hint" aria-live="polite">${T("Escolha um tamanho para continuar","请先选择尺码")}</p>
+        </form>
+        <div class="perks">
+          <p><b>${T("Entrega","配送")}</b><span>${T("Até 7 dias úteis, todo o Brasil","7 个工作日内送达巴西全境")}</span></p>
+          <p><b>${T("Personalização","定制")}</b><span>${T("Nome e número em 48 h","48 小时内印制名字和号码")}</span></p>
+          <p><b>${T("Troca","退换")}</b><span>${T("Troca de tamanho grátis em 7 dias","7 天内免费换码")}</span></p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+  ${rel.length?`<section class="related"><div class="wrap">
+    <div class="head"><h2>${T("Mais da "+lg,"更多"+lg)}</h2><a class="btn ghost" href="index.html#l-${x.l}">${T("Ver todas","查看全部")} (${rel.length+1})</a></div>
+    <div class="grid">${rel.slice(start,start+6).map(r=>`<a class="card" href="camisa.html?id=${r.h}"><div class="pic"><img src="fotos/all/${r.h}.webp" alt="${r.n} ${r.k}" loading="lazy" width="440" height="440"></div><div class="info"><h3>${T(r.t,r.tz)}</h3>${T(r.q,r.qz)?`<div class="meta">${T(r.q,r.qz)}</div>`:""}<div class="price">R$ ${PRICE}</div></div></a>`).join("")}</div>
+  </div></section>`:""}`;
+
+  const f=$("f"),add=$("add"),hint=$("hint");
+  let size=null;
+  f.addEventListener("change",e=>{size=e.target.value;$("sel").textContent=size;add.setAttribute("aria-disabled","false");hint.className="hint";hint.textContent=""});
+  f.addEventListener("submit",e=>{
+    e.preventDefault();
+    if(!size){hint.className="hint";hint.textContent=T("Escolha um tamanho para continuar","请先选择尺码");f.querySelector("input").focus();return}
+    cart.push({h:x.h,size});try{localStorage.cart=JSON.stringify(cart)}catch{}
+    $("count").textContent=cart.length;
+    hint.className="hint ok";hint.textContent=T(`${x.t} (${size}) adicionada ao carrinho`,`${x.tz}（${size}）已加入购物车`);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,3 +1,6 @@
 .vercel
 .claude
 .DS_Store
+__pycache__/
+sites/
+gerador/_test_*

@@ -1,38 +1,48 @@
-# Xiaoshuai
+# Gerador de lojas de camisas
 
-Mockup de loja de camisas de time, feito para apresentar ao fornecedor. Está no ar em https://xiaoshuai.vercel.app.
+Monta e publica a loja de um revendedor de camisas de time a partir de três dados: nome da loja, WhatsApp e link do Yupoo. O primeiro site feito com ele está em https://xiaoshuai.vercel.app.
 
-São 3.593 camisas, tiradas do catálogo do fornecedor no Yupoo e separadas por liga. Cada camisa tem a própria página, com escolha de tamanho. O carrinho fica salvo no navegador e o pedido é fechado pelo WhatsApp, com a mensagem já escrita. O site tem versão em português e em chinês.
+Cada loja gerada tem:
 
-## Arquivos
+- o catálogo inteiro do Yupoo, separado por liga (Brasileirão, Premier League, seleções, retrô…)
+- títulos em português com time, modelo e temporada ("Camisa 2 Cruzeiro 26/27 · Jogador")
+- uma página para cada camisa, com escolha de tamanho
+- carrinho com total e botão que abre o WhatsApp do revendedor com o pedido já escrito
+- versão em chinês, que o próprio visitante liga
 
-- `index.html`: página inicial e catálogo por liga
-- `camisa.html`: página de uma camisa (`camisa.html?id=<hash>`)
-- `carrinho.html`: carrinho, total e botão do WhatsApp
-- `style.css`: estilos usados pelas três páginas
-- `catalog.json`: dados de cada camisa (`h` hash da foto, `n` time, `l` liga, `t`/`tz` título em PT/ZH, `q`/`qz` detalhes, `s` tamanhos)
-- `fotos/all/`: fotos em WebP de 440px, nomeadas pelo hash
-- `fotos/*.jpeg`: fotos da primeira tela
-
-## Rodar localmente
+## Gerar uma loja
 
 ```bash
-python3 -m http.server 5173
+python3 gerar.py --nome "Xiaoshuai" --whatsapp "+86 195 2122 8559" --yupoo "https://x.yupoo.com/photos/1022669895/albums"
 ```
 
-Depois é só abrir http://localhost:5173.
+No fim ele mostra o link da loja no ar. Opções:
 
-## Publicar
+- `--preco 60`: preço único em reais (padrão 52)
+- `--slug outro-nome`: nome da pasta e do projeto na Vercel (padrão: o nome da loja sem acentos)
+- `--sem-publicar`: só monta a pasta, sem publicar
 
-```bash
-npx vercel deploy --prod --archive=tgz
-```
+Um catálogo de ~3.600 camisas leva alguns minutos, quase todo o tempo baixando fotos. Se cair no meio, é só rodar de novo: as fotos que já baixaram são puladas.
 
-Use `--archive=tgz`. Sem ele, a Vercel envia as 3.593 fotos uma por uma e o plano gratuito estoura o limite de uploads por dia.
+## Precisa ter
 
-## O que ainda é provisório
+- Python 3 (só biblioteca padrão)
+- `cwebp`: `brew install webp`
+- Node (para o `npx vercel`) e login na Vercel: `npx vercel login`
 
-- Todas as camisas custam R$ 52 (`PRICE` em `camisa.html` e `carrinho.html`, e o texto fixo em `index.html`).
-- O número do WhatsApp fica em `carrinho.html` (`WA`).
-- A liga e o modelo de cada camisa saíram dos títulos do Yupoo por palavras-chave, então algumas podem estar no lugar errado.
-- Prazos de entrega, personalização em 48 h e troca grátis são textos de exemplo.
+## Como está organizado
+
+- `gerar.py`: junta tudo, do Yupoo até o link publicado
+- `gerador/yupoo.py`: lê os álbuns do Yupoo e baixa as fotos em WebP de 440px
+- `gerador/classificar.py`: tira time, liga, modelo, temporada e tamanhos do título de cada álbum
+- `modelo/`: as páginas, com marcadores como `{{NOME}}`, `{{WA}}` e `{{PRECO}}`
+- `sites/<loja>/`: cada loja gerada, fora do git por causa das fotos
+
+Para mudar o visual de todas as lojas, edite `modelo/` e gere de novo. Como as fotos já estão baixadas, a segunda vez é rápida.
+
+## Limites
+
+- Liga e modelo saem de palavras-chave nos títulos. Títulos estranhos ou times que o classificador não conhece vão para "Outros".
+- Todas as camisas têm o mesmo preço.
+- Os textos de entrega, personalização em 48 h e troca grátis são iguais em todas as lojas e não foram combinados com nenhum revendedor.
+- O plano grátis da Vercel tem limites de uso. Se muitas lojas forem para o ar, talvez seja preciso um plano pago ou outra hospedagem.
