@@ -109,7 +109,7 @@ def main():
     ap.add_argument("--cotacao", type=float, default=5.8, help="reais por dólar, para o frete (padrão 5.8)")
     ap.add_argument("--preco-jogador", type=int, default=87, help="preço da versão jogador em reais (padrão 87)")
     ap.add_argument("--preco-retro", type=int, help="preço das retrô em reais (padrão: o mesmo da versão torcedor)")
-    ap.add_argument("--personalizacao", type=float, default=0, help="preço de nome e número por peça, em dólar; vira real pela --cotacao (padrão 0: a combinar no WhatsApp)")
+    ap.add_argument("--personalizacao", type=float, default=0, help="preço de nome e número por peça, em reais (padrão 0: a combinar no WhatsApp)")
     ap.add_argument("--frete", default="5,4,3", help="frete em dólar com 1, 2, 3… camisas; depois disso é grátis (padrão 5,4,3)")
     ap.add_argument("--logo", type=Path, help="imagem que substitui o nome escrito no topo e no rodapé (fica guardada na pasta da loja)")
     ap.add_argument("--banner", type=Path, help="imagem larga (3:1) que substitui o topo da home (fica guardada na pasta da loja)")
@@ -176,7 +176,7 @@ def main():
     if a.sem_classico:
         (saida / "_sem-classico").touch()
     montar(saida, a.nome, wa, a.cotacao, frete, cat, imagem, banner, classico=not (saida / "_sem-classico").exists(),
-           pers=round(a.personalizacao * a.cotacao, 2))
+           pers=a.personalizacao)
     ligas = {}
     for x in cat:
         ligas[x["l"]] = ligas.get(x["l"], 0) + 1

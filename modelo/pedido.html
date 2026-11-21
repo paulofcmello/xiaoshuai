@@ -56,7 +56,7 @@ else fetch("catalog.json").then(r=>r.json()).then(all=>{
     <p><span>球衣 Shirts (${n})</span><b>${brl(sub)}</b></p>
     <p><span>运费 Shipping</span><b>${f?brl(f):"免运费 Free"}</b></p>
     <p class="otot"><span>合计 Total</span><b>${brl(sub+f)}</b></p>
-    <p class="snote">1 USD = ${COTACAO} BRL${(!PERS&&itens.some(i=>i[2]||i[3]))?" · 定制费用另议 Customization price to confirm":""}</p>
+    ${(!PERS&&itens.some(i=>i[2]||i[3]))?`<p class="snote">定制费用另议 Customization price to confirm</p>`:""}
   </section>`;
 });
 </script>

@@ -68,8 +68,7 @@ function message(ls,sub){const n=cart.length,f=frete(n);
       +` — ${brlEn(preco(l)*l.q)}`+(x.u?`\n   ${x.u}`:"")}),
     "",`Shirts: ${brlEn(sub)} (${n} ${n==1?"shirt":"shirts"})`,
     `Shipping: ${f?brlEn(f):`free (${GRATIS}+ shirts)`}`,
-    `Total: ${brlEn(sub+f)}`,
-    `Rate: 1 USD = ${COTACAO} BRL`].join("\n");
+    `Total: ${brlEn(sub+f)}`].join("\n");
 }
 
 function render(){
