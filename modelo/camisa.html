@@ -6,7 +6,7 @@
 <title>Camisa — {{NOME}}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="atacado.css?v=5">
+<link rel="stylesheet" href="atacado.css?v=6">
 </head>
 <body>
 <div class="strip" aria-hidden="true"><div id="strip"></div></div>
@@ -30,6 +30,8 @@
 <script>
 const lg=(()=>{try{return localStorage.lang||"pt"}catch{return"pt"}})();
 const T=(pt,cn,en)=>lg=="zh"?cn:lg=="en"?(en??pt):pt;
+const PERS={{PRECO_PERS}};  // preço da personalização em reais; 0 = a combinar no WhatsApp
+const reais=v=>"R$ "+v.toLocaleString("pt-BR",{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2});
 document.getElementById("strip").innerHTML=[T("Envio para todo o Brasil","全巴西配送","Shipping to all of Brazil"),T("Pix ou até 6x sem juros","Pix 或 6 期免息","Pix or 6 interest-free installments"),T("Personalize com nome e número","定制名字和号码","Custom name and number"),T("Tamanhos P ao 4XL","尺码 S 至 4XL","Sizes S to 4XL")].map(t=>`<span>${t}</span>`).join("").repeat(4);
 const L={brasileirao:["Brasileirão","巴西甲级联赛"],premier:["Premier League","英超"],laliga:["La Liga","西甲"],seriea:["Serie A","意甲"],bundesliga:["Bundesliga","德甲"],ligue1:["Ligue 1","法甲"],portugal:["Liga Portugal","葡超"],argentina:["Argentina","阿根廷联赛"],"liga-mx":["Liga MX","墨西哥联赛"],mls:["MLS","美职联"],saudi:["Saudi Pro League","沙特联赛"],"outras-ligas":["Outras ligas","其他联赛","Other leagues"],selecoes:["Seleções","国家队","National teams"],retro:["Retrô","复古球衣","Retro"],outros:["Outros","其他","Other"]};
 const read=()=>{try{return JSON.parse(localStorage.cart||"[]")}catch{return[]}};
@@ -60,6 +62,10 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
         <form id="f">
           <fieldset><legend>${T("Tamanho","尺码","Size")}<span id="sel" style="color:var(--muted);font-weight:500"></span></legend>
           <div class="sizes">${x.s.map(s=>`<label><input type="radio" name="size" value="${s}"><span>${s}</span></label>`).join("")}</div></fieldset>
+          <details class="pers"><summary>${T("Personalizar com nome e número","印名字和号码","Add name and number")} <small>${PERS?"+ "+reais(PERS):T("valor a combinar","费用另议","price to confirm")} · ${T("opcional","可选","optional")}</small></summary>
+            <div class="persf"><label>${T("Nome","名字","Name")}<input id="pnome" maxlength="12" autocomplete="off" placeholder="${T("Ex.: SILVA","例如：SILVA","E.g. SILVA")}"></label>
+            <label>${T("Número","号码","Number")}<input id="pnum" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="10"></label></div>
+            <p>${T("Deixe em branco se não quiser personalizar.","不需要定制请留空。","Leave blank if you don't want it.")}</p></details>
           <button class="btn primary addbtn" id="add" aria-disabled="true" aria-describedby="hint">${T("Adicionar ao carrinho","加入购物车","Add to cart")}</button>
           <p class="hint" id="hint" aria-live="polite">${T("Escolha um tamanho para continuar","请先选择尺码","Choose a size to continue")}</p>
         </form>
@@ -76,19 +82,24 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
     <div class="grid">${rel.slice(start,start+6).map(r=>`<a class="card" href="camisa.html?id=${r.h}"><div class="pic"><img src="fotos/all/${r.h}.webp" alt="${T(r.t,r.tz,r.te)}" loading="lazy" width="440" height="440"></div><div class="info"><h3>${T(r.t,r.tz,r.te)}</h3>${T(r.q,r.qz,r.qe)?`<div class="meta">${T(r.q,r.qz,r.qe)}</div>`:""}<div class="price">R$ ${r.p}</div></div></a>`).join("")}</div>
   </div></section>`:""}`;
 
-  const f=$("f"),add=$("add"),hint=$("hint");
+  const f=$("f"),add=$("add"),hint=$("hint"),pn=$("pnome"),pu=$("pnum");
+  // nome só com letras (vira maiúsculo), número só com 2 dígitos; o preço mostrado já soma a personalização
+  const persv=()=>({nome:pn.value.replace(/[^\p{L} .'-]/gu,"").trim().toUpperCase().slice(0,12),num:pu.value.replace(/\D/g,"").slice(0,2)});
+  f.addEventListener("input",e=>{if(e.target==pu)pu.value=pu.value.replace(/\D/g,"");const v=persv();document.querySelector(".big").textContent=reais(x.p+((v.nome||v.num)?PERS:0))});
   let size=null;
   f.addEventListener("change",e=>{size=e.target.value;$("sel").textContent=size;add.setAttribute("aria-disabled","false");hint.className="hint";hint.textContent=""});
   f.addEventListener("submit",e=>{
     e.preventDefault();
     if(!size){hint.className="hint";hint.textContent=T("Escolha um tamanho para continuar","请先选择尺码","Choose a size to continue");f.querySelector("input").focus();return}
     if(add.classList.contains("loading"))return;
-    cart=read();cart.push({h:x.h,size});try{localStorage.cart=JSON.stringify(cart)}catch{}
+    const v=persv(),item={h:x.h,size};if(v.nome)item.nome=v.nome;if(v.num)item.num=v.num;
+    cart=read();cart.push(item);try{localStorage.cart=JSON.stringify(cart)}catch{}
     add.classList.add("loading");add.setAttribute("aria-busy","true");
     fly(()=>{
       add.classList.remove("loading");add.removeAttribute("aria-busy");
       const c=$("count");c.textContent=cart.length;c.classList.remove("pop");void c.offsetWidth;c.classList.add("pop");
-      hint.className="hint ok";hint.textContent=T(`${x.t} (${size}) adicionada ao carrinho`,`${x.tz}（${size}）已加入购物车`,`${x.te} (${size}) added to cart`);
+      const ex=[size,v.nome,v.num].filter(Boolean).join(" · ");
+      hint.className="hint ok";hint.textContent=T(`${x.t} (${ex}) adicionada ao carrinho`,`${x.tz}（${ex}）已加入购物车`,`${x.te} (${ex}) added to cart`);
     });
   });
   // miniatura da camisa voa do botão até o carrinho do menu
@@ -102,7 +113,7 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
   }
 });
 </script>
-<script src="gaveta.js?v=2"></script>
+<script src="gaveta.js?v=3"></script>
 <script src="busca.js?v=2"></script>
 </body>
 </html>

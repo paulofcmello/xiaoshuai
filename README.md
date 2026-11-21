@@ -16,10 +16,13 @@ Cada loja gerada tem:
 python3 gerar.py --nome "Xiaoshuai" --whatsapp "+86 195 2122 8559" --yupoo "https://x.yupoo.com/photos/1022669895/albums"
 ```
 
+Para juntar vários Yupoos numa loja só, passe os links um depois do outro: `--yupoo LINK1 LINK2 LINK3`.
+
 No fim ele mostra o link da loja no ar. Opções:
 
 - `--preco 60` e `--preco-jogador 90`: preço da versão torcedor e da versão jogador, em reais (padrão 58 e 87)
 - `--preco-retro 99`: preço das retrô, em reais (padrão: o mesmo da versão torcedor)
+- `--personalizacao 3`: preço de nome e número por peça, em dólar (vira real pela cotação, como o frete). Sem ela, o site mostra "valor a combinar" e o pedido avisa que o preço ainda vai ser confirmado
 - `--frete 5,4,3`: frete em dólar com 1, 2, 3… camisas; com mais camisas que a lista, é grátis (padrão 5,4,3)
 - `--cotacao 5.8`: reais por dólar, para converter o frete
 - `--logo jin.webp`: imagem no lugar do nome escrito no topo e no rodapé. Fica guardada na pasta da loja, então nas próximas vezes não precisa repetir

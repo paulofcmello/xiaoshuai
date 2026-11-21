@@ -24,6 +24,9 @@ def _get(url, headers=UA, timeout=30):
 
 def _base(url):
     u = urlparse(url if "//" in url else "https://" + url)
+    m = re.match(r"/photos/([^/?#]+)/categories/(\d+)", u.path)
+    if u.netloc == "x.yupoo.com" and m:  # x.yupoo.com/photos/<loja>/categories/<id> só funciona no subdomínio da loja
+        return f"https://{m.group(1)}.x.yupoo.com/categories/{m.group(2)}?isSubCate=false"
     m = re.search(r"/categories/(\d+)", u.path)
     if m:  # .../categories/<id>: só essa categoria
         return f"{u.scheme}://{u.netloc}/categories/{m.group(1)}?isSubCate=false"

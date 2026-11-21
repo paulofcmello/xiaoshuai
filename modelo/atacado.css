@@ -275,3 +275,18 @@ legend{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.0
 .sitem:hover span{color:var(--red)}
 .snote{color:var(--muted);font-size:13px;text-align:center;padding:16px 0}
 @media (max-width:620px){.sgrid{grid-template-columns:repeat(2,1fr)}.spanel{margin-top:12px;max-height:calc(100vh - 24px)}}
+
+/* personalização (nome e número) */
+.pers{margin-top:22px;border:1.5px solid var(--line);border-radius:10px;padding:0 14px}
+.pers[open]{border-color:var(--ink)}
+.pers summary{cursor:pointer;padding:14px 0;font-size:13px;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.pers summary::-webkit-details-marker{display:none}
+.pers summary::after{content:"+";font-size:20px;font-weight:500;margin-left:auto}
+.pers[open] summary::after{content:"−"}
+.pers summary small{color:var(--red);font-weight:600;font-size:12px}
+.persf{display:grid;grid-template-columns:2fr 1fr;gap:10px}
+.persf label{display:grid;gap:6px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.persf input{height:46px;border:1.5px solid var(--line);border-radius:8px;padding:0 12px;font:700 16px Poppins,"Noto Sans SC",sans-serif;text-transform:uppercase;color:var(--ink);background:#fff}
+.persf input:focus{outline:0;border-color:var(--ink)}
+.pers p{color:var(--muted);font-size:12px;padding:8px 0 14px}
+.perstag{color:var(--red)!important;font-weight:600}
