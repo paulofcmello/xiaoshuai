@@ -25,7 +25,7 @@ No fim ele mostra o link da loja no ar. Opções:
 - `--personalizacao 20`: preço de nome e número por peça, em reais. Sem ela, o site mostra "valor a combinar" e o pedido avisa que o preço ainda vai ser confirmado
 - `--patch 7`: preço de cada patch, em reais. A página da camisa pergunta "Tem patch?" (não, 1 ou 2) e pede para o cliente mandar a foto do patch no WhatsApp. Sem ela, a pergunta não aparece
 - `--frete 5,4,3`: frete em dólar com 1, 2, 3… camisas; com mais camisas que a lista, é grátis (padrão 5,4,3)
-- `--cotacao 5.8`: reais por dólar, para converter o frete
+- `--cotacao 5.8`: reais por dólar, para converter o frete. Para passar o frete já em reais, use `--cotacao 1` (ex.: `--frete 56,49,42,35,28,21,14 --cotacao 1`)
 - `--logo jin.webp`: imagem no lugar do nome escrito no topo e no rodapé. Fica guardada na pasta da loja, então nas próximas vezes não precisa repetir
 - `--banner banner.webp`: imagem larga (proporção 3:1) no lugar do título do topo da home. Também fica guardada na pasta da loja
 - `--sem-classico`: tira a home antiga e o botão "Visual clássico". Também fica guardado na pasta da loja
