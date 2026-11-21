@@ -6,7 +6,7 @@
 <title>Carrinho — {{NOME}}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="atacado.css?v=7">
+<link rel="stylesheet" href="atacado.css?v=8">
 </head>
 <body>
 <div class="strip" aria-hidden="true"><div id="strip"></div></div>
@@ -56,8 +56,13 @@ function lines(){const m=new Map();cart.forEach(c=>{const k=keyOf(c);m.set(k,{..
 const brlEn=v=>"R$ "+v.toFixed(2);
 // frete em dólar por pedido: FRETE[n-1] para n camisas; acima da lista é grátis
 const COTACAO={{COTACAO}}, FRETE={{FRETE}}, GRATIS=FRETE.length+1, freteUsd=n=>FRETE[n-1]||0, frete=n=>Math.round(freteUsd(n)*COTACAO*100)/100;
+// link da página do pedido: o pedido vai codificado no próprio link (base64url de [hash, tamanho, nome, número, qtd])
+function orderLink(ls){const bytes=new TextEncoder().encode(JSON.stringify(ls.map(l=>[l.h,l.size,l.nome||"",l.num||"",l.q])));
+  const b=btoa(String.fromCharCode(...bytes)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  return new URL("pedido.html",location.href).href.split("#")[0]+"#p="+b}
 function message(ls,sub){const n=cart.length,f=frete(n);
   return ["Hi! I'd like to place this order from the {{NOME}} site:","",
+    "📋 订单图片 Order with photos:",orderLink(ls),"",
     ...ls.map(l=>{const x=byH[l.h];return `• ${l.q}x ${x.te}${x.qe?" ("+x.qe+")":""} — size ${l.size}`
       +(pers(l)?` — CUSTOM: ${[l.nome&&"name "+l.nome,l.num&&"number "+l.num].filter(Boolean).join(", ")} (${PERS?"+"+brlEn(PERS)+" each":"price to confirm"})`:"")
       +` — ${brlEn(preco(l)*l.q)}`+(x.u?`\n   ${x.u}`:"")}),

@@ -10,7 +10,7 @@ from pathlib import Path
 from gerador import yupoo, classificar
 
 RAIZ = Path(__file__).resolve().parent
-PAGINAS = ["index.html", "classico.html", "camisa.html", "carrinho.html", "style.css", "atacado.css", "gaveta.js", "busca.js"]
+PAGINAS = ["index.html", "classico.html", "camisa.html", "carrinho.html", "style.css", "atacado.css", "gaveta.js", "busca.js", "pedido.html"]
 CAMPOS = ["h", "n", "l", "t", "tz", "te", "q", "qz", "qe", "s", "p", "u", "sh"]
 
 
