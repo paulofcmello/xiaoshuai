@@ -217,3 +217,36 @@ legend{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.0
 @keyframes spin{to{transform:rotate(360deg)}}
 #count.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
 @keyframes pop{40%{transform:scale(1.6)}}
+
+/* gaveta do carrinho */
+.drawer{position:fixed;inset:0;z-index:60}
+.dshade{position:absolute;inset:0;background:rgba(0,0,0,.5);opacity:0;transition:opacity .3s}
+.drawer aside{position:absolute;top:0;right:0;bottom:0;width:min(460px,100%);background:#fff;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:-10px 0 40px rgba(0,0,0,.2)}
+.drawer.on .dshade{opacity:1}.drawer.on aside{transform:none}
+.drawer header{display:flex;align-items:center;justify-content:space-between;padding:22px 24px 14px}
+.drawer h2{font:800 28px/1 Poppins,"Noto Sans SC",sans-serif;display:flex;align-items:center;gap:10px}
+.drawer h2 span{background:#EFEFEF;border-radius:99px;min-width:28px;height:28px;display:grid;place-items:center;font-size:13px;font-weight:600}
+.dclose{width:52px;height:52px;border-radius:50%;border:1.5px solid var(--ink);background:#fff;display:grid;place-items:center;color:var(--ink)}
+.dclose:hover{background:var(--ink);color:#fff}
+.dbody{flex:1;display:flex;flex-direction:column;min-height:0}
+.dlist{flex:1;overflow:auto;padding:0 24px;overscroll-behavior:contain}
+.dline{display:grid;grid-template-columns:72px 1fr auto;gap:16px;padding:20px 0;border-bottom:1px solid var(--line)}
+.dline img{width:72px;height:72px;object-fit:cover;border-radius:6px;background:#F4F4F4}
+.dline h3{font-size:15px;font-weight:500;line-height:1.4}
+.dline h3 a:hover{color:var(--red)}
+.dline p{color:var(--muted);font-size:13px;margin-top:4px}
+.dline .pr{color:var(--ink);font-size:14px}
+.dsum{font-weight:500;font-size:14px;white-space:nowrap}
+.dact{display:flex;align-items:center;gap:14px;margin-top:12px}
+.dqty{display:inline-flex;align-items:center;border:1px solid #D6D6D6;border-radius:6px}
+.dqty button{width:40px;height:42px;border:0;background:none;font-size:18px;color:var(--ink)}
+.dqty button:hover{color:var(--red)}
+.dqty output{min-width:30px;text-align:center;font-size:14px}
+.dtrash{border:0;background:none;padding:6px;color:var(--ink);display:grid}
+.dtrash:hover{color:var(--red)}
+.dfoot{padding:20px 24px 24px;border-top:1px solid var(--line)}
+.dtot{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;font-weight:500}
+.dtot b{font-weight:600}
+.dfoot p{color:var(--muted);font-size:13px;margin-top:10px}
+.dfoot .btn,.dempty .btn{width:100%;height:56px;margin-top:18px;text-transform:none;letter-spacing:0;font-size:16px;font-weight:600}
+.dempty{padding:32px 24px;text-align:center;color:var(--muted)}

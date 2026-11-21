@@ -6,7 +6,7 @@
 <title>Camisa — {{NOME}}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="atacado.css?v=2">
+<link rel="stylesheet" href="atacado.css?v=3">
 </head>
 <body>
 <div class="strip" aria-hidden="true"><div id="strip"></div></div>
@@ -83,7 +83,7 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
     e.preventDefault();
     if(!size){hint.className="hint";hint.textContent=T("Escolha um tamanho para continuar","请先选择尺码","Choose a size to continue");f.querySelector("input").focus();return}
     if(add.classList.contains("loading"))return;
-    cart.push({h:x.h,size});try{localStorage.cart=JSON.stringify(cart)}catch{}
+    cart=read();cart.push({h:x.h,size});try{localStorage.cart=JSON.stringify(cart)}catch{}
     add.classList.add("loading");add.setAttribute("aria-busy","true");
     fly(()=>{
       add.classList.remove("loading");add.removeAttribute("aria-busy");
@@ -102,5 +102,6 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
   }
 });
 </script>
+<script src="gaveta.js?v=1"></script>
 </body>
 </html>

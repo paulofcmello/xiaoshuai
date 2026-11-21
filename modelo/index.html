@@ -7,7 +7,7 @@
 <script>try{if(localStorage.visual=="classico")location.replace("classico.html"+location.search+location.hash)}catch{}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="atacado.css?v=2">
+<link rel="stylesheet" href="atacado.css?v=3">
 </head>
 <body>
 <div class="strip" aria-hidden="true"><div id="strip"></div></div>
@@ -143,5 +143,6 @@ document.getElementById("lang").onclick=()=>setLang(NEXT[lg]);
 try{const q=new URLSearchParams(location.search).get("lang");if(NEXT[q])localStorage.lang=q}catch{}
 try{if(NEXT[localStorage.lang]&&localStorage.lang!="pt")setLang(localStorage.lang)}catch{}
 </script>
+<script src="gaveta.js?v=1"></script>
 </body>
 </html>
