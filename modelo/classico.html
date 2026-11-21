@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{NOME}} — Camisas de time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=6">
+<script>try{localStorage.visual="classico"}catch{}</script>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <a class="logo" href="#">{{LOGO}}</a>
+  <div class="links"><a href="#l-brasileirao" data-en="Clubs" data-zh="俱乐部">Clubes</a><a href="#l-selecoes" data-en="National teams" data-zh="国家队">Seleções</a><a href="#personalize" data-en="Customize" data-zh="定制">Personalizar</a><a href="#entrega" data-en="Delivery" data-zh="配送">Entrega</a></div>
+  <div class="navr"><a class="cart" href="index.html" onclick="try{localStorage.visual='novo'}catch{}" data-en="New look" data-zh="新版外观">Visual novo</a><button class="cart" id="lang" aria-label="Mudar idioma / Language / 切换语言">EN</button>
+  <a class="cart" href="carrinho.html"><span data-en="Cart" data-zh="购物车">Carrinho</span> <b id="count">0</b></a></div>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <h1 data-en="Football shirts for those who <em>live the game</em>" data-zh="为<em>热爱</em>足球的你而生">Camisas de time pra quem <em>vive o jogo</em></h1>
+    <p class="lead" data-en="Over {{MODELOS_ZH}} club and national team kits, printed with any name and number you want." data-zh="{{MODELOS_ZH}} 多款俱乐部和国家队球衣，名字和号码随心定制。">Mais de {{MODELOS}} modelos de clubes e seleções, com nome e número estampados do jeito que você quiser.</p>
+    <div class="actions"><a class="btn primary" href="#loja" data-en="Browse catalog" data-zh="查看目录">Ver catálogo</a><a class="btn ghost" href="#personalize" data-en="Customize mine" data-zh="定制我的球衣">Personalizar a minha</a></div>
+    <p class="fact" data-en="{{TOTAL_ZH}} shirts in stock · S to 4XL" data-zh="{{TOTAL_ZH}} 款球衣 · 尺码 S 至 4XL">{{TOTAL}} camisas em estoque · P ao 4XL</p>
+  </div>
+  <div class="mosaic" id="mosaic"></div>
+</div></header>
+
+<section id="loja"><div class="wrap">
+  <div class="head"><h2 data-en="Full catalog" data-zh="全部球衣">Catálogo completo</h2><p class="count" id="total"></p></div>
+</div>
+<nav class="leagues" aria-label="Ligas"><div class="wrap" id="leaguenav"></div></nav>
+<div class="wrap" id="catalog"></div>
+</section>
+
+<section class="band" id="personalize"><div class="wrap">
+  <div class="duo" id="duo"></div>
+  <div>
+    <h2 data-en="Your name on the back" data-zh="印上你的名字">Seu nome nas costas</h2>
+    <p data-en="Pick a shirt, type a name and number and we print it in the club's official font." data-zh="选好球衣，输入名字和号码，我们用俱乐部官方字体印制。">Escolha a camisa, digite nome e número e a gente estampa na fonte oficial do clube.</p>
+    <a class="btn primary" href="#loja" data-en="Choose a shirt" data-zh="选择球衣">Escolher camisa</a>
+  </div>
+</div></section>
+
+<section id="entrega"><div class="wrap">
+  <div class="head"><h2 data-en="How buying works" data-zh="购买流程">Como funciona a compra</h2></div>
+  <div class="steps">
+    <div><span>01</span><strong data-en="Pick your kit" data-zh="选择款式">Escolha o modelo</strong><p data-en="Home, away or third. Fan or player version." data-zh="主场、客场或第三球衣，球迷版或球员版。">Home, away ou third. Versão torcedor ou jogador.</p></div>
+    <div><span>02</span><strong data-en="Pay with Pix or card" data-zh="Pix 或信用卡付款">Pague no Pix ou cartão</strong><p data-en="Pix, or up to 6 interest-free card installments." data-zh="支持 Pix，信用卡最多 6 期免息。">Pix ou até 6x sem juros no cartão.</p></div>
+    <div><span>03</span><strong data-en="Delivered to your door" data-zh="送货上门">Receba em casa</strong><p data-en="Tracked shipping across Brazil within 7 business days." data-zh="全巴西可追踪配送，7 个工作日内送达。">Envio com rastreio para todo o Brasil em até 7 dias úteis.</p></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <span class="logo">{{LOGO}}</span>
+  <span>Mockup de demonstração · Demo · 演示样稿</span>
+</div></footer>
+
+<script>
+const brl=v=>"R$ "+v.toLocaleString("pt-BR");
+let lg="pt";const T=(pt,cn,en)=>lg=="zh"?cn:lg=="en"?(en??pt):pt,nm=s=>T(s.n,s.z,s.e);
+const hero={{HERO}};
+// times conhecidos primeiro na vitrine
+const STAR=["Flamengo","Palmeiras","Corinthians","Manchester United","Arsenal","Liverpool","Real Madrid","Barcelona","Inter Milan","Napoli","Brasil","Argentina"];
+const pick=(keys,n,used=new Set())=>{const out=[];keys.forEach(k=>{const c=data.filter(x=>x.l==k&&!x.sh&&!used.has(x.n)),home=x=>/^Camisa 1 /.test(x.t)&&!x.q,star=x=>STAR.includes(x.n),x=c.find(x=>star(x)&&home(x))||c.find(star)||c.find(home)||c[0];if(x&&out.length<n){used.add(x.n);out.push(x)}});return out};
+const tile=x=>`<a href="camisa.html?id=${x.h}" aria-label="${T(x.t,x.tz,x.te)}"><img src="fotos/all/${x.h}.webp" alt="${T(x.t,x.tz,x.te)}" width="440" height="440"></a>`;
+function showcase(){
+  const used=new Set(),m=document.getElementById("mosaic");
+  if(!data.length){m.innerHTML=`<a href="#loja"><img src="${hero.img}" alt="Camisa ${hero.n}"></a>`+'<a href="#loja"></a>'.repeat(5);return}
+  const h=pick(["brasileirao","premier","laliga","seriea","selecoes","brasileirao"],6,used);
+  const extra=data.filter(x=>!used.has(x.n));let i=0;while(h.length<6&&extra[i]){h.push(extra[i++])}
+  m.innerHTML=h.map(tile).join("");
+  document.getElementById("duo").innerHTML=pick(["portugal","selecoes","retro","outros","premier","laliga","seriea"],2,used).map(tile).join("");
+}
+const L={brasileirao:["Brasileirão","巴西甲级联赛"],premier:["Premier League","英超"],laliga:["La Liga","西甲"],seriea:["Serie A","意甲"],bundesliga:["Bundesliga","德甲"],ligue1:["Ligue 1","法甲"],portugal:["Liga Portugal","葡超"],argentina:["Argentina","阿根廷联赛"],"liga-mx":["Liga MX","墨西哥联赛"],mls:["MLS","美职联"],saudi:["Saudi Pro League","沙特联赛"],"outras-ligas":["Outras ligas","其他联赛","Other leagues"],selecoes:["Seleções","国家队","National teams"],retro:["Retrô","复古球衣","Retro"],outros:["Outros","其他","Other"]};
+let data=[];showcase();const cart=(()=>{try{return JSON.parse(localStorage.cart||"[]")}catch{return[]}})();document.getElementById("count").textContent=cart.length;const fmt=n=>n.toLocaleString("pt-BR");
+const pl=x=>(x.qe||"").split(" · ").includes("Player");
+function render(){
+  const by={};data.forEach(x=>(by[x.l]??=[]).push(x));
+  const keys=Object.keys(L).filter(k=>by[k]);
+  document.getElementById("total").textContent=T(`${fmt(data.length)} camisas em ${keys.length} categorias`,`${fmt(data.length)} 款球衣 · ${keys.length} 个分类`,`${data.length.toLocaleString("en")} shirts in ${keys.length} categories`);
+  document.getElementById("leaguenav").innerHTML=keys.map(k=>`<a href="#l-${k}">${T(...L[k])}<small>${by[k].length}</small></a>`).join("");
+  document.getElementById("catalog").innerHTML=keys.map(k=>`<section class="league" id="l-${k}"><header><h3>${T(...L[k])}</h3><span class="count">${T(by[k].length+" camisas",by[k].length+" 款",by[k].length+" shirts")}</span></header><div class="grid">${
+    by[k].map(x=>`<a class="card" href="camisa.html?id=${x.h}"><div class="pic">${pl(x)?`<span class="tag">${T("Jogador","球员版","Player")}</span>`:""}<img src="fotos/all/${x.h}.webp" alt="${x.t}" loading="lazy" decoding="async" width="440" height="440"></div><div class="info"><h3>${T(x.t,x.tz,x.te)}</h3>${T(x.q,x.qz,x.qe)?`<div class="meta">${T(x.q,x.qz,x.qe)}</div>`:""}<div class="price${pl(x)?" pl":""}">R$ ${x.p}</div></div></a>`).join("")}</div></section>`).join("");
+  spy();
+}
+let io;function spy(){io?.disconnect();io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;
+  document.querySelectorAll(".leagues a").forEach(a=>{const on=a.hash=="#"+e.target.id;a.classList.toggle("on",on);if(on)a.scrollIntoView({block:"nearest",inline:"center"})})}),{rootMargin:"-140px 0px -70% 0px"});
+  document.querySelectorAll(".league").forEach(s=>io.observe(s))}
+fetch("catalog.json").then(r=>r.json()).then(d=>{data=d;render();showcase()});
+document.querySelectorAll("[data-zh]").forEach(e=>e.dataset.pt=e.innerHTML);
+const NEXT={pt:"en",en:"zh",zh:"pt"},BTN={pt:"EN",en:"中文",zh:"PT"};
+function setLang(v){lg=v;const b=document.getElementById("lang");b.textContent=BTN[v];
+  document.documentElement.lang={pt:"pt-BR",en:"en",zh:"zh-CN"}[v];
+  document.querySelectorAll("[data-zh]").forEach(e=>e.innerHTML=e.dataset[v]);showcase();render();try{localStorage.lang=v}catch{}}
+document.getElementById("lang").onclick=()=>setLang(NEXT[lg]);
+try{const q=new URLSearchParams(location.search).get("lang");if(NEXT[q])localStorage.lang=q}catch{}
+try{if(NEXT[localStorage.lang]&&localStorage.lang!="pt")setLang(localStorage.lang)}catch{}
+</script>
+</body>
+</html>

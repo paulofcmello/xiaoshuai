@@ -39,7 +39,7 @@ Um catálogo de ~3.600 camisas leva alguns minutos, quase todo o tempo baixando 
 - `gerar.py`: junta tudo, do Yupoo até o link publicado
 - `gerador/yupoo.py`: lê os álbuns do Yupoo e baixa as fotos em WebP de 440px
 - `gerador/classificar.py`: tira time, liga, modelo, temporada e tamanhos do título de cada álbum
-- `modelo/`: as páginas, com marcadores como `{{NOME}}` e `{{WA}}`
+- `modelo/`: as páginas, com marcadores como `{{NOME}}` e `{{WA}}`. A home tem dois visuais: `index.html` (o novo) e `classico.html`. Um botão no menu troca entre eles, e o navegador do visitante guarda a escolha
 - `sites/<loja>/`: cada loja gerada, fora do git por causa das fotos
 
 Para mudar o visual de todas as lojas, edite `modelo/` e gere de novo. Como as fotos já estão baixadas, a segunda vez é rápida.

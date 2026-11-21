@@ -4,89 +4,275 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{NOME}} — Camisas de time</title>
+<script>try{if(localStorage.visual=="classico")location.replace("classico.html"+location.search+location.hash)}catch{}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=6">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--red:#E1251B;--red2:#B81A12;--ink:#111;--muted:#6B6B6B;--line:#E6E6E6;--gray:#EDEDED;--wrap:1240px;--gut:24px;--nav:64px;
+ --disp:Archivo,"Noto Sans SC","Arial Black",sans-serif;
+ --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.09'/%3E%3C/svg%3E")}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:#fff;color:var(--ink);font:15px/1.55 Poppins,"Noto Sans SC",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}img{display:block;max-width:100%}
+.wrap{max-width:var(--wrap);margin:0 auto;padding-inline:var(--gut)}
+:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+.disp{font-family:var(--disp);font-stretch:125%;text-transform:uppercase;line-height:.92}
+
+/* faixa e menu */
+.strip{background:var(--red);color:#fff;overflow:hidden;white-space:nowrap;font:700 12px/34px Poppins,"Noto Sans SC",sans-serif;text-transform:uppercase;letter-spacing:.06em}
+.strip div{display:inline-block;animation:run 40s linear infinite}
+.strip span{margin:0 28px}.strip span::before{content:"★";margin-right:28px;opacity:.6}
+@keyframes run{to{transform:translateX(-50%)}}
+nav.top{position:sticky;top:0;z-index:20;background:#0B0B0B;color:#fff}
+nav.top .wrap{display:flex;align-items:center;gap:32px;height:var(--nav)}
+.logo{font:900 22px/1 var(--disp);font-stretch:125%;text-transform:uppercase;font-style:italic;color:#fff;flex:none}
+.logo span{color:var(--red)}
+.logo img{height:44px;width:auto;border-radius:6px}
+.links{display:flex;gap:24px;font-size:14px;font-weight:500;flex:1}
+.links a{color:#D6D6D6;white-space:nowrap}
+@media (max-width:1000px){.links{display:none}}.links a:hover,.links a:first-child{color:#fff}
+.navr{display:flex;gap:18px;align-items:center;margin-left:auto}
+.ico{display:inline-flex;align-items:center;gap:8px;background:none;border:0;color:#fff;font-size:13px;font-weight:600}
+.ico svg{width:22px;height:22px}
+.vis{border:1px solid #444;border-radius:99px;padding:6px 12px;white-space:nowrap}.vis:hover{border-color:var(--red)}
+#count{background:var(--red);color:#fff;border-radius:99px;min-width:20px;height:20px;padding:0 6px;display:grid;place-items:center;font-size:11px;font-weight:700}
+
+/* botões e rótulos */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 28px;border-radius:8px;background:var(--red);color:#fff;font:700 13px Poppins,"Noto Sans SC",sans-serif;text-transform:uppercase;letter-spacing:.04em;border:0;box-shadow:0 4px 0 var(--red2);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 0 var(--red2)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--red2)}
+.btn.wa{background:#25D366;box-shadow:0 4px 0 #1A9E4B;border-radius:99px;text-transform:none;letter-spacing:0;font-size:14px}
+.pill{display:inline-block;background:var(--red);color:#fff;font:700 11px/1 Poppins,"Noto Sans SC",sans-serif;text-transform:uppercase;letter-spacing:.08em;padding:7px 14px;border-radius:99px}
+.title{text-align:center;margin-bottom:28px}
+.title h2{font:700 clamp(26px,3vw,34px)/1.2 Poppins,"Noto Sans SC",sans-serif;margin:12px 0 6px}
+.title p{color:var(--muted)}
+
+/* banners cinza */
+.banner{background:var(--gray) var(--noise);position:relative;overflow:hidden}
+.hero .wrap{text-align:center;padding-top:72px}
+.hero .mark{display:inline-block;margin-bottom:28px;color:var(--ink)}.hero .mark span{color:var(--red)}
+.hero h1{font-weight:500;font-size:clamp(40px,7.4vw,96px)}
+.hero h1 b{display:block;font-weight:900;font-size:1.32em;letter-spacing:-.01em}
+.tagline{display:inline-flex;flex-direction:column;align-items:flex-start;margin-top:22px}
+.tagline span{background:var(--red);color:#fff;font:500 clamp(16px,2vw,24px)/1 var(--disp);font-stretch:125%;text-transform:uppercase;padding:8px 14px}
+.tagline span b{font-weight:900}
+.tagline i{display:block;width:62%;height:6px;background:var(--ink);margin-top:10px}
+.shelf{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:48px;position:relative}
+.shelf::before{content:"";position:absolute;left:-8vw;right:42%;top:38%;height:10px;background:var(--red);z-index:0}
+.shelf a{position:relative;z-index:1;aspect-ratio:1;border-radius:14px 14px 0 0;overflow:hidden;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.12);transform:translateY(18px);transition:transform .3s}
+.shelf a:hover{transform:translateY(4px)}
+.shelf img,.duo img,.card .pic img,.dpic img{width:100%;height:100%;object-fit:cover}
+.facts{background:#0B0B0B;color:#fff}
+.facts .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding-block:22px}
+.facts div{display:flex;flex-direction:column;font-size:13px;color:#BDBDBD;border-left:3px solid var(--red);padding-left:14px}
+.facts strong{color:#fff;font-size:15px}
+
+section{padding:72px 0}
+/* coleções */
+.tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.tabs button{border:1.5px solid var(--ink);background:#fff;border-radius:99px;padding:9px 18px;font:700 12px Poppins,"Noto Sans SC",sans-serif;text-transform:uppercase;letter-spacing:.05em}
+.tabs button[aria-selected=true]{background:var(--ink);color:#fff}
+.tabs button:hover{border-color:var(--red)}
+.more{text-align:center;margin-top:36px}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:28px 16px}
+.card{display:block;text-align:center}
+.card .pic{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#F4F4F4}
+.card .pic img{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.card:hover .pic img{transform:scale(1.05)}
+.tag{position:absolute;top:8px;left:8px;z-index:1;background:var(--ink);color:#fff;font:700 10px/1 Poppins,"Noto Sans SC",sans-serif;text-transform:uppercase;padding:6px 8px;border-radius:4px}
+.card h3{font-size:13px;font-weight:600;line-height:1.35;margin-top:12px}
+.card .meta{font-size:12px;color:var(--muted);margin-top:2px}
+.card .price{color:var(--red);font-weight:700;font-size:15px;margin-top:4px}
+
+/* banner personalização */
+.promo .wrap{display:grid;grid-template-columns:1fr 1.1fr;gap:40px;align-items:center;padding-block:56px}
+.promo .wrap>div:first-child{border-left:5px solid var(--red);padding-left:24px}
+.promo h2{font-weight:500;font-size:clamp(36px,5vw,64px)}
+.promo h2 b{display:block;font-weight:900;font-size:1.25em}
+.promo p{margin:16px 0 26px;color:#333;font-weight:500;max-width:36ch}
+.promo p u{text-decoration-color:var(--red);text-decoration-thickness:3px;text-underline-offset:4px;font-weight:700}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.duo a{aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:var(--red);padding:14px;box-shadow:0 14px 30px rgba(225,37,27,.25)}
+.duo img{border-radius:10px}
+
+/* bloco escuro */
+.dark{background:#0B0B0B;color:#fff;border-radius:22px;border-left:8px solid var(--red);display:grid;grid-template-columns:.8fr 1.2fr;gap:48px;align-items:center;padding:40px}
+.dpic{aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:#222}
+.kicker{color:var(--red);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
+.dark h2{font:800 clamp(26px,3vw,36px)/1.15 Poppins,"Noto Sans SC",sans-serif;text-transform:uppercase;margin:8px 0 18px}
+.dark h2 em{font-style:normal;color:var(--red)}
+.dark ol{list-style:none;padding:0;margin:0 0 28px;display:grid;gap:14px}
+.dark li{display:grid;grid-template-columns:auto 1fr;gap:14px;color:#CFCFCF}
+.dark li b{color:#fff;display:block}
+.dark li>span{font:900 14px/1 var(--disp);font-stretch:125%;background:var(--red);color:#fff;width:34px;height:34px;display:grid;place-items:center;border-radius:6px}
+
+/* catálogo */
+.leagues{position:sticky;top:var(--nav);z-index:15;background:#fff;border-bottom:1px solid var(--line)}
+.leagues .wrap{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-block:10px}
+.leagues a{flex:none;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:99px;background:#F2F2F2;font-size:12px;font-weight:700;text-transform:uppercase;white-space:nowrap}
+.leagues a small{font-weight:500;color:var(--muted)}
+.leagues a.on{background:var(--red);color:#fff}.leagues a.on small{color:#FFD5D2}
+.league{padding-top:48px;scroll-margin-top:130px;content-visibility:auto;contain-intrinsic-size:auto 1400px}
+.league header{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.league header h3{font:900 clamp(22px,2.6vw,30px)/1 var(--disp);font-stretch:125%;text-transform:uppercase}
+.league header::after{content:"";flex:1;height:4px;background:var(--red);max-width:120px}
+.league .count{color:var(--muted);font-size:13px;order:3;margin-left:auto}
+
+/* cta e rodapé */
+.cta .wrap{text-align:center;padding-block:64px}
+.cta h2{font-weight:500;font-size:clamp(30px,4.5vw,56px)}
+.cta h2 b{display:block;font-weight:900;font-size:1.2em}
+.cta p{margin:14px 0 26px;font-weight:500}
+.cta p mark{background:var(--red);color:#fff;padding:2px 6px}
+footer{background:#0B0B0B;color:#BDBDBD;font-size:13px;padding-top:48px}
+footer .cols{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:40px}
+footer h4{color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px}
+footer p{margin-bottom:8px}
+footer .logo{font-size:26px;display:inline-block;margin-bottom:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chips span{border:1px solid #333;border-radius:6px;padding:6px 10px;color:#fff}
+footer .btn{margin-top:8px}
+.legal{border-top:1px solid #222;margin-top:40px;padding:18px 0;text-align:center;font-size:12px;color:#777}
+
+@media (max-width:1099px){.grid{grid-template-columns:repeat(4,1fr)}.shelf{grid-template-columns:repeat(4,1fr)}.shelf a:nth-child(n+5){display:none}}
+@media (max-width:860px){
+  .links{display:none}
+  .facts .wrap{grid-template-columns:repeat(2,1fr)}
+  .promo .wrap,.dark{grid-template-columns:1fr}
+  .dark{padding:24px}.dpic{aspect-ratio:16/10}
+  .grid{grid-template-columns:repeat(2,1fr);gap:24px 12px}
+  footer .cols{grid-template-columns:1fr}
+  section{padding:56px 0}
+}
+@media (max-width:520px){:root{--gut:16px}.shelf{grid-template-columns:repeat(3,1fr);gap:8px}.shelf a:nth-child(n+4){display:none}.hero .wrap{padding-top:48px}.btn{width:100%}nav.top .wrap,.navr{gap:10px}nav.top .logo{font-size:14px;min-width:0}.vis{padding:5px 9px;font-size:11px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+</style>
 </head>
 <body>
+<div class="strip" aria-hidden="true"><div id="strip"></div></div>
 <nav class="top"><div class="wrap">
   <a class="logo" href="#">{{LOGO}}</a>
-  <div class="links"><a href="#l-brasileirao" data-en="Clubs" data-zh="俱乐部">Clubes</a><a href="#l-selecoes" data-en="National teams" data-zh="国家队">Seleções</a><a href="#personalize" data-en="Customize" data-zh="定制">Personalizar</a><a href="#entrega" data-en="Delivery" data-zh="配送">Entrega</a></div>
-  <div class="navr"><button class="cart" id="lang" aria-label="Mudar idioma / Language / 切换语言">EN</button>
-  <a class="cart" href="carrinho.html"><span data-en="Cart" data-zh="购物车">Carrinho</span> <b id="count">0</b></a></div>
+  <div class="links"><a href="#" data-en="Home" data-zh="首页">Página inicial</a><a href="#l-brasileirao" data-en="Brazilian league" data-zh="巴甲">Brasileirão</a><a href="#l-premier" data-en="International" data-zh="国际">Internacionais</a><a href="#l-selecoes" data-en="National teams" data-zh="国家队">Seleções</a><a href="#l-retro" data-en="Retro" data-zh="复古">Retrôs</a><a href="#como" data-en="How it works" data-zh="购买流程">Como comprar</a></div>
+  <div class="navr">
+    <a class="ico vis" href="classico.html" data-en="Classic look" data-zh="经典外观">Visual clássico</a>
+    <button class="ico" id="lang" aria-label="Mudar idioma / Language / 切换语言">EN</button>
+    <a class="ico" href="carrinho.html" aria-label="Carrinho"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><b id="count">0</b></a>
+  </div>
 </div></nav>
 
-<header class="hero"><div class="wrap">
-  <div>
-    <h1 data-en="Football shirts for those who <em>live the game</em>" data-zh="为<em>热爱</em>足球的你而生">Camisas de time pra quem <em>vive o jogo</em></h1>
-    <p class="lead" data-en="Over {{MODELOS_ZH}} club and national team kits, printed with any name and number you want." data-zh="{{MODELOS_ZH}} 多款俱乐部和国家队球衣，名字和号码随心定制。">Mais de {{MODELOS}} modelos de clubes e seleções, com nome e número estampados do jeito que você quiser.</p>
-    <div class="actions"><a class="btn primary" href="#loja" data-en="Browse catalog" data-zh="查看目录">Ver catálogo</a><a class="btn ghost" href="#personalize" data-en="Customize mine" data-zh="定制我的球衣">Personalizar a minha</a></div>
-    <p class="fact" data-en="{{TOTAL_ZH}} shirts in stock · S to 4XL" data-zh="{{TOTAL_ZH}} 款球衣 · 尺码 S 至 4XL">{{TOTAL}} camisas em estoque · P ao 4XL</p>
-  </div>
-  <div class="mosaic" id="mosaic"></div>
+<header class="hero banner"><div class="wrap">
+  <span class="mark logo disp">{{LOGO}}</span>
+  <h1 class="disp" data-en="Over<b>{{MODELOS_ZH}} kits</b>" data-zh="超过<b>{{MODELOS_ZH}} 款</b>">Mais de<b>{{MODELOS}} modelos</b></h1>
+  <div class="tagline"><span data-en="Shipping to <b>all of Brazil</b>" data-zh="<b>全巴西</b>配送">Envio para <b>todo o Brasil</b></span><i></i></div>
+  <div class="shelf" id="mosaic"></div>
 </div></header>
+<div class="facts"><div class="wrap">
+  <div><strong data-en="{{TOTAL_ZH}} shirts" data-zh="{{TOTAL_ZH}} 款球衣">{{TOTAL}} camisas</strong><span data-en="clubs and national teams" data-zh="俱乐部和国家队">clubes e seleções</span></div>
+  <div><strong data-en="S to 4XL" data-zh="S 至 4XL">P ao 4XL</strong><span data-en="fan and player versions" data-zh="球迷版和球员版">torcedor e jogador</span></div>
+  <div><strong data-en="Name and number" data-zh="名字和号码">Nome e número</strong><span data-en="in the club's official font" data-zh="俱乐部官方字体">na fonte oficial do clube</span></div>
+  <div><strong data-en="Pix or card" data-zh="Pix 或信用卡">Pix ou cartão</strong><span data-en="up to 6 interest-free installments" data-zh="最多 6 期免息">até 6x sem juros</span></div>
+</div></div>
 
-<section id="loja"><div class="wrap">
-  <div class="head"><h2 data-en="Full catalog" data-zh="全部球衣">Catálogo completo</h2><p class="count" id="total"></p></div>
+<section id="colecoes"><div class="wrap">
+  <div class="title"><h2 data-en="Top collections 🔥" data-zh="热门系列 🔥">Principais coleções 🔥</h2></div>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="grid" id="colgrid"></div>
+  <div class="more"><a class="btn" id="colmore" href="#loja" data-en="See all" data-zh="查看全部">Ver tudo</a></div>
+</div></section>
+
+<div class="promo banner" id="personalize"><div class="wrap">
+  <div>
+    <h2 class="disp" data-en="Your name<b>on the back</b>" data-zh="把名字<b>印在背后</b>">Seu nome<b>nas costas</b></h2>
+    <p data-en="Pick a shirt, type a name and number. <u>We print it in the official font.</u>" data-zh="选好球衣，输入名字和号码。<u>我们用官方字体印制。</u>">Escolha a camisa, digite nome e número. <u>A gente estampa na fonte oficial.</u></p>
+    <a class="btn" href="#loja" data-en="Choose a shirt" data-zh="选择球衣">Escolher camisa</a>
+  </div>
+  <div class="duo" id="duo"></div>
+</div></div>
+
+<section id="como"><div class="wrap">
+  <div class="dark">
+    <div class="dpic" id="dpic"></div>
+    <div>
+      <span class="kicker" data-en="Read before buying" data-zh="购买前须知">Entenda antes de comprar</span>
+      <h2 data-en="How does <em>buying</em> work?" data-zh="如何<em>购买</em>？">Como funciona a <em>compra</em>?</h2>
+      <ol>
+        <li><span>1</span><div><b data-en="Pick your kit" data-zh="选择款式">Escolha o modelo</b><span class="x" data-en="Home, away or third. Fan or player version." data-zh="主场、客场或第三球衣，球迷版或球员版。">Home, away ou third. Versão torcedor ou jogador.</span></div></li>
+        <li><span>2</span><div><b data-en="Pay with Pix or card" data-zh="Pix 或信用卡付款">Pague no Pix ou cartão</b><span class="x" data-en="Pix, or up to 6 interest-free card installments." data-zh="支持 Pix，信用卡最多 6 期免息。">Pix ou até 6x sem juros no cartão.</span></div></li>
+        <li><span>3</span><div><b data-en="Delivered to your door" data-zh="送货上门">Receba em casa</b><span class="x" data-en="Tracked shipping across Brazil within 7 business days." data-zh="全巴西可追踪配送，7 个工作日内送达。">Envio com rastreio para todo o Brasil em até 7 dias úteis.</span></div></li>
+      </ol>
+      <a class="btn wa" href="https://wa.me/{{WA}}" target="_blank" rel="noopener" data-en="Questions? Ask on WhatsApp" data-zh="有疑问？WhatsApp 联系">Tirar dúvidas no WhatsApp</a>
+    </div>
+  </div>
+</div></section>
+
+<section id="loja" style="padding-top:0"><div class="wrap">
+  <div class="title"><span class="pill" data-en="Full catalog" data-zh="全部球衣">Catálogo completo</span><h2 data-en="Every shirt in stock" data-zh="所有现货球衣">Todas as camisas</h2><p id="total"></p></div>
 </div>
 <nav class="leagues" aria-label="Ligas"><div class="wrap" id="leaguenav"></div></nav>
 <div class="wrap" id="catalog"></div>
 </section>
 
-<section class="band" id="personalize"><div class="wrap">
-  <div class="duo" id="duo"></div>
-  <div>
-    <h2 data-en="Your name on the back" data-zh="印上你的名字">Seu nome nas costas</h2>
-    <p data-en="Pick a shirt, type a name and number and we print it in the club's official font." data-zh="选好球衣，输入名字和号码，我们用俱乐部官方字体印制。">Escolha a camisa, digite nome e número e a gente estampa na fonte oficial do clube.</p>
-    <a class="btn primary" href="#loja" data-en="Choose a shirt" data-zh="选择球衣">Escolher camisa</a>
-  </div>
-</div></section>
-
-<section id="entrega"><div class="wrap">
-  <div class="head"><h2 data-en="How buying works" data-zh="购买流程">Como funciona a compra</h2></div>
-  <div class="steps">
-    <div><span>01</span><strong data-en="Pick your kit" data-zh="选择款式">Escolha o modelo</strong><p data-en="Home, away or third. Fan or player version." data-zh="主场、客场或第三球衣，球迷版或球员版。">Home, away ou third. Versão torcedor ou jogador.</p></div>
-    <div><span>02</span><strong data-en="Pay with Pix or card" data-zh="Pix 或信用卡付款">Pague no Pix ou cartão</strong><p data-en="Pix, or up to 6 interest-free card installments." data-zh="支持 Pix，信用卡最多 6 期免息。">Pix ou até 6x sem juros no cartão.</p></div>
-    <div><span>03</span><strong data-en="Delivered to your door" data-zh="送货上门">Receba em casa</strong><p data-en="Tracked shipping across Brazil within 7 business days." data-zh="全巴西可追踪配送，7 个工作日内送达。">Envio com rastreio para todo o Brasil em até 7 dias úteis.</p></div>
-  </div>
-</div></section>
+<div class="cta banner"><div class="wrap">
+  <h2 class="disp" data-en="Talk to<b>{{NOME}}</b>" data-zh="联系<b>{{NOME}}</b>">Fale com a<b>{{NOME}}</b></h2>
+  <p data-en="Order, sizes and <mark>customization</mark> straight on WhatsApp" data-zh="下单、尺码和<mark>定制</mark>，直接 WhatsApp 联系">Pedido, tamanhos e <mark>personalização</mark> direto no WhatsApp</p>
+  <a class="btn" href="https://wa.me/{{WA}}" target="_blank" rel="noopener" data-en="Click here" data-zh="点击这里">Clique aqui</a>
+</div></div>
 
 <footer><div class="wrap">
-  <span class="logo">{{LOGO}}</span>
-  <span>Mockup de demonstração · Demo · 演示样稿</span>
+  <div class="cols">
+    <div><span class="logo">{{LOGO}}</span><p data-en="Football shirts from clubs and national teams, shipped to all of Brazil." data-zh="俱乐部和国家队球衣，配送全巴西。">Camisas de clubes e seleções, com envio para todo o Brasil.</p></div>
+    <div><h4 data-en="Customer service" data-zh="客服中心">Central de atendimento</h4><p>WhatsApp +{{WA}}</p><a class="btn wa" href="https://wa.me/{{WA}}" target="_blank" rel="noopener" data-en="Chat on WhatsApp" data-zh="WhatsApp 联系">Falar no WhatsApp</a></div>
+    <div><h4 data-en="Payment" data-zh="付款方式">Formas de pagamento</h4><div class="chips"><span>Pix</span><span data-en="Credit card" data-zh="信用卡">Cartão de crédito</span></div><h4 data-en="Shipping" data-zh="配送">Envio</h4><p data-en="We ship across Brazil with a tracking code." data-zh="全巴西配送，附物流单号。">Enviamos para todo o Brasil com código de rastreio.</p></div>
+  </div>
+  <div class="legal">© {{NOME}} · Mockup de demonstração · Demo · 演示样稿</div>
 </div></footer>
 
 <script>
-const brl=v=>"R$ "+v.toLocaleString("pt-BR");
-let lg="pt";const T=(pt,cn,en)=>lg=="zh"?cn:lg=="en"?(en??pt):pt,nm=s=>T(s.n,s.z,s.e);
+let lg="pt";const T=(pt,cn,en)=>lg=="zh"?cn:lg=="en"?(en??pt):pt;
 const hero={{HERO}};
 // times conhecidos primeiro na vitrine
 const STAR=["Flamengo","Palmeiras","Corinthians","Manchester United","Arsenal","Liverpool","Real Madrid","Barcelona","Inter Milan","Napoli","Brasil","Argentina"];
-const pick=(keys,n,used=new Set())=>{const out=[];keys.forEach(k=>{const c=data.filter(x=>x.l==k&&!x.sh&&!used.has(x.n)),home=x=>/^Camisa 1 /.test(x.t)&&!x.q,star=x=>STAR.includes(x.n),x=c.find(x=>star(x)&&home(x))||c.find(star)||c.find(home)||c[0];if(x&&out.length<n){used.add(x.n);out.push(x)}});return out};
+const home=x=>/^Camisa 1 /.test(x.t)&&!x.q,star=x=>STAR.includes(x.n);
+const pick=(keys,n,used=new Set())=>{const out=[];keys.forEach(k=>{const c=data.filter(x=>x.l==k&&!x.sh&&!used.has(x.n)),x=c.find(x=>star(x)&&home(x))||c.find(star)||c.find(home)||c[0];if(x&&out.length<n){used.add(x.n);out.push(x)}});return out};
 const tile=x=>`<a href="camisa.html?id=${x.h}" aria-label="${T(x.t,x.tz,x.te)}"><img src="fotos/all/${x.h}.webp" alt="${T(x.t,x.tz,x.te)}" width="440" height="440"></a>`;
+const pl=x=>(x.qe||"").split(" · ").includes("Player");
+const card=x=>`<a class="card" href="camisa.html?id=${x.h}"><div class="pic">${pl(x)?`<span class="tag">${T("Jogador","球员版","Player")}</span>`:""}<img src="fotos/all/${x.h}.webp" alt="${T(x.t,x.tz,x.te)}" loading="lazy" decoding="async" width="440" height="440"></div><h3>${T(x.t,x.tz,x.te)}</h3>${T(x.q,x.qz,x.qe)?`<div class="meta">${T(x.q,x.qz,x.qe)}</div>`:""}<div class="price">R$ ${x.p}</div></a>`;
 function showcase(){
   const used=new Set(),m=document.getElementById("mosaic");
-  if(!data.length){m.innerHTML=`<a href="#loja"><img src="${hero.img}" alt="Camisa ${hero.n}"></a>`+'<a href="#loja"></a>'.repeat(5);return}
+  if(!data.length){m.innerHTML=`<a href="#loja"><img src="${hero.img}" alt="Camisa ${hero.n}"></a>`;return}
   const h=pick(["brasileirao","premier","laliga","seriea","selecoes","brasileirao"],6,used);
-  const extra=data.filter(x=>!used.has(x.n));let i=0;while(h.length<6&&extra[i]){h.push(extra[i++])}
+  const extra=data.filter(x=>!used.has(x.n));let i=0;while(h.length<6&&extra[i]){used.add(extra[i].n);h.push(extra[i++])}
   m.innerHTML=h.map(tile).join("");
   document.getElementById("duo").innerHTML=pick(["portugal","selecoes","retro","outros","premier","laliga","seriea"],2,used).map(tile).join("");
+  document.getElementById("dpic").innerHTML=pick(["retro","selecoes","premier","laliga","brasileirao","outros"],1,used).map(tile).join("");
 }
 const L={brasileirao:["Brasileirão","巴西甲级联赛"],premier:["Premier League","英超"],laliga:["La Liga","西甲"],seriea:["Serie A","意甲"],bundesliga:["Bundesliga","德甲"],ligue1:["Ligue 1","法甲"],portugal:["Liga Portugal","葡超"],argentina:["Argentina","阿根廷联赛"],"liga-mx":["Liga MX","墨西哥联赛"],mls:["MLS","美职联"],saudi:["Saudi Pro League","沙特联赛"],"outras-ligas":["Outras ligas","其他联赛","Other leagues"],selecoes:["Seleções","国家队","National teams"],retro:["Retrô","复古球衣","Retro"],outros:["Outros","其他","Other"]};
-let data=[];showcase();const cart=(()=>{try{return JSON.parse(localStorage.cart||"[]")}catch{return[]}})();document.getElementById("count").textContent=cart.length;const fmt=n=>n.toLocaleString("pt-BR");
-const pl=x=>x.p==87;
+let data=[],tab;const cart=(()=>{try{return JSON.parse(localStorage.cart||"[]")}catch{return[]}})();document.getElementById("count").textContent=cart.length;const fmt=n=>n.toLocaleString("pt-BR");
+function strip(){const s=[T("Envio para todo o Brasil","全巴西配送","Shipping to all of Brazil"),T("Pix ou até 6x sem juros","Pix 或 6 期免息","Pix or 6 interest-free installments"),T("Personalize com nome e número","定制名字和号码","Custom name and number"),T("Tamanhos P ao 4XL","尺码 S 至 4XL","Sizes S to 4XL")].map(t=>`<span>${t}</span>`).join("");document.getElementById("strip").innerHTML=s.repeat(4)}
+// coleções: até 6 abas com as ligas que têm mais camisas, 12 camisas cada (uma por time primeiro)
+function collections(by){
+  const keys=["brasileirao","premier","laliga","selecoes","retro","seriea"].filter(k=>by[k]).slice(0,6);if(!keys.includes(tab))tab=keys[0];
+  document.getElementById("tabs").innerHTML=keys.map(k=>`<button role="tab" aria-selected="${k==tab}" data-k="${k}">${T(...L[k])}</button>`).join("");
+  const c=by[tab]||[],seen=new Set(),first=c.filter(x=>!x.sh&&!seen.has(x.n)&&seen.add(x.n)).sort((a,b)=>star(b)-star(a));
+  document.getElementById("colgrid").innerHTML=[...first,...c.filter(x=>!first.includes(x))].slice(0,12).map(card).join("");
+  document.getElementById("colmore").href="#l-"+tab;
+}
+document.getElementById("tabs").onclick=e=>{const b=e.target.closest("button");if(b){tab=b.dataset.k;render()}};
 function render(){
+  strip();
   const by={};data.forEach(x=>(by[x.l]??=[]).push(x));
   const keys=Object.keys(L).filter(k=>by[k]);
+  collections(by);
   document.getElementById("total").textContent=T(`${fmt(data.length)} camisas em ${keys.length} categorias`,`${fmt(data.length)} 款球衣 · ${keys.length} 个分类`,`${data.length.toLocaleString("en")} shirts in ${keys.length} categories`);
   document.getElementById("leaguenav").innerHTML=keys.map(k=>`<a href="#l-${k}">${T(...L[k])}<small>${by[k].length}</small></a>`).join("");
-  document.getElementById("catalog").innerHTML=keys.map(k=>`<section class="league" id="l-${k}"><header><h3>${T(...L[k])}</h3><span class="count">${T(by[k].length+" camisas",by[k].length+" 款",by[k].length+" shirts")}</span></header><div class="grid">${
-    by[k].map(x=>`<a class="card" href="camisa.html?id=${x.h}"><div class="pic">${pl(x)?`<span class="tag">${T("Jogador","球员版","Player")}</span>`:""}<img src="fotos/all/${x.h}.webp" alt="${x.t}" loading="lazy" decoding="async" width="440" height="440"></div><div class="info"><h3>${T(x.t,x.tz,x.te)}</h3>${T(x.q,x.qz,x.qe)?`<div class="meta">${T(x.q,x.qz,x.qe)}</div>`:""}<div class="price${pl(x)?" pl":""}">R$ ${x.p}</div></div></a>`).join("")}</div></section>`).join("");
+  document.getElementById("catalog").innerHTML=keys.map(k=>`<section class="league" id="l-${k}"><header><h3>${T(...L[k])}</h3><span class="count">${T(by[k].length+" camisas",by[k].length+" 款",by[k].length+" shirts")}</span></header><div class="grid">${by[k].map(card).join("")}</div></section>`).join("");
   spy();
 }
 let io;function spy(){io?.disconnect();io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;
   document.querySelectorAll(".leagues a").forEach(a=>{const on=a.hash=="#"+e.target.id;a.classList.toggle("on",on);if(on)a.scrollIntoView({block:"nearest",inline:"center"})})}),{rootMargin:"-140px 0px -70% 0px"});
   document.querySelectorAll(".league").forEach(s=>io.observe(s))}
+showcase();strip();
 fetch("catalog.json").then(r=>r.json()).then(d=>{data=d;render();showcase()});
 document.querySelectorAll("[data-zh]").forEach(e=>e.dataset.pt=e.innerHTML);
 const NEXT={pt:"en",en:"zh",zh:"pt"},BTN={pt:"EN",en:"中文",zh:"PT"};
@@ -94,6 +280,7 @@ function setLang(v){lg=v;const b=document.getElementById("lang");b.textContent=B
   document.documentElement.lang={pt:"pt-BR",en:"en",zh:"zh-CN"}[v];
   document.querySelectorAll("[data-zh]").forEach(e=>e.innerHTML=e.dataset[v]);showcase();render();try{localStorage.lang=v}catch{}}
 document.getElementById("lang").onclick=()=>setLang(NEXT[lg]);
+try{const q=new URLSearchParams(location.search).get("lang");if(NEXT[q])localStorage.lang=q}catch{}
 try{if(NEXT[localStorage.lang]&&localStorage.lang!="pt")setLang(localStorage.lang)}catch{}
 </script>
 </body>
