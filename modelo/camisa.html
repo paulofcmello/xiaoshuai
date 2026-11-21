@@ -6,7 +6,7 @@
 <title>Camisa — {{NOME}}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="atacado.css?v=1">
+<link rel="stylesheet" href="atacado.css?v=2">
 </head>
 <body>
 <div class="strip" aria-hidden="true"><div id="strip"></div></div>
@@ -82,10 +82,24 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
   f.addEventListener("submit",e=>{
     e.preventDefault();
     if(!size){hint.className="hint";hint.textContent=T("Escolha um tamanho para continuar","请先选择尺码","Choose a size to continue");f.querySelector("input").focus();return}
+    if(add.classList.contains("loading"))return;
     cart.push({h:x.h,size});try{localStorage.cart=JSON.stringify(cart)}catch{}
-    $("count").textContent=cart.length;
-    hint.className="hint ok";hint.textContent=T(`${x.t} (${size}) adicionada ao carrinho`,`${x.tz}（${size}）已加入购物车`,`${x.te} (${size}) added to cart`);
+    add.classList.add("loading");add.setAttribute("aria-busy","true");
+    fly(()=>{
+      add.classList.remove("loading");add.removeAttribute("aria-busy");
+      const c=$("count");c.textContent=cart.length;c.classList.remove("pop");void c.offsetWidth;c.classList.add("pop");
+      hint.className="hint ok";hint.textContent=T(`${x.t} (${size}) adicionada ao carrinho`,`${x.tz}（${size}）已加入购物车`,`${x.te} (${size}) added to cart`);
+    });
   });
+  // miniatura da camisa voa do botão até o carrinho do menu
+  function fly(done){
+    const to=document.querySelector("nav.top .ico").getBoundingClientRect(),from=add.getBoundingClientRect();
+    if(matchMedia("(prefers-reduced-motion: reduce)").matches||!to.width||!window.Element.prototype.animate)return setTimeout(done,300);
+    const g=document.createElement("img"),s=64;g.src=`fotos/all/${x.h}.webp`;g.alt="";g.className="flyer";
+    g.style.left=from.left+from.width/2-s/2+"px";g.style.top=from.top+from.height/2-s/2+"px";document.body.append(g);
+    const dx=to.left+to.width/2-(from.left+from.width/2),dy=to.top+to.height/2-(from.top+from.height/2);
+    g.animate([{transform:"translate(0,0) scale(1)"},{transform:`translate(${dx*.4}px,${dy*.4-80}px) scale(.85)`,offset:.45},{transform:`translate(${dx}px,${dy}px) scale(.25)`,opacity:.5}],{duration:750,easing:"cubic-bezier(.45,0,.35,1)"}).onfinish=()=>{g.remove();done()};
+  }
 });
 </script>
 </body>
