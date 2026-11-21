@@ -663,6 +663,8 @@ Indonésia = indonesian
 Malásia = malaysian
 Israel = israeli
 Nova Zelândia = new zealander
+@argentina
+Independiente = 独立竞技
 @brasileirao
 Flamengo = 佛拉门戈, 弗拉明戈, 佛拉明戈
 Vasco da Gama = 达伽马

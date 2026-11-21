@@ -18,10 +18,10 @@
   const body = el.querySelector(".dbody");
 
   // camisa + tamanho + nome/número iguais viram uma linha com quantidade
-  const PERS = {{PRECO_PERS}};
-  const keyOf = c => encodeURIComponent(JSON.stringify([c.h, c.size, c.nome || "", c.num || ""]));
-  const pers = c => !!(c.nome || c.num), preco = c => byH[c.h].p + (pers(c) ? PERS : 0);
-  const persTxt = c => [c.nome && T("Nome", "名字", "Name") + " " + c.nome, c.num && T("Nº", "号码", "No.") + " " + c.num].filter(Boolean).join(" · ");
+  const PERS = {{PRECO_PERS}}, PATCH = {{PRECO_PATCH}};
+  const keyOf = c => encodeURIComponent(JSON.stringify([c.h, c.size, c.nome || "", c.num || "", c.patch || 0]));
+  const pers = c => !!(c.nome || c.num), preco = c => byH[c.h].p + (pers(c) ? PERS : 0) + (c.patch || 0) * PATCH;
+  const persTxt = c => [c.nome && T("Nome", "名字", "Name") + " " + c.nome, c.num && T("Nº", "号码", "No.") + " " + c.num, c.patch && T("Patch", "臂章", "Patch") + " ×" + c.patch].filter(Boolean).join(" · ");
   const lines = cart => { const m = new Map(); cart.forEach(c => { const k = keyOf(c); m.set(k, { ...c, k, q: (m.get(k)?.q || 0) + 1 }) }); return [...m.values()] };
 
   function render() {
@@ -40,7 +40,7 @@
       <div class="dline">
         <a href="camisa.html?id=${x.h}"><img src="fotos/all/${x.h}.webp" alt="" width="72" height="72"></a>
         <div><h3><a href="camisa.html?id=${x.h}">${T(x.t, x.tz, x.te)}</a></h3>
-          <p>${[T(x.q, x.qz, x.qe), l.size].filter(Boolean).join(" · ")}</p>${pers(l) ? `<p class="perstag">${persTxt(l)}</p>` : ""}
+          <p>${[T(x.q, x.qz, x.qe), l.size].filter(Boolean).join(" · ")}</p>${pers(l) || l.patch ? `<p class="perstag">${persTxt(l)}</p>` : ""}
           <p class="pr">${brl(preco(l))}</p>
           <div class="dact"><div class="dqty"><button data-a="-" data-k="${k}" aria-label="${T("Diminuir", "减少", "Decrease")}">−</button><output>${l.q}</output><button data-a="+" data-k="${k}" aria-label="${T("Aumentar", "增加", "Increase")}">+</button></div>
           <button class="dtrash" data-a="x" data-k="${k}" aria-label="${T("Remover", "删除", "Remove")}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div>

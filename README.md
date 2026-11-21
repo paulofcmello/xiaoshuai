@@ -23,6 +23,7 @@ No fim ele mostra o link da loja no ar. Opções:
 - `--preco 60` e `--preco-jogador 90`: preço da versão torcedor e da versão jogador, em reais (padrão 58 e 87)
 - `--preco-retro 99`: preço das retrô, em reais (padrão: o mesmo da versão torcedor)
 - `--personalizacao 20`: preço de nome e número por peça, em reais. Sem ela, o site mostra "valor a combinar" e o pedido avisa que o preço ainda vai ser confirmado
+- `--patch 7`: preço de cada patch, em reais. A página da camisa pergunta "Tem patch?" (não, 1 ou 2) e pede para o cliente mandar a foto do patch no WhatsApp. Sem ela, a pergunta não aparece
 - `--frete 5,4,3`: frete em dólar com 1, 2, 3… camisas; com mais camisas que a lista, é grátis (padrão 5,4,3)
 - `--cotacao 5.8`: reais por dólar, para converter o frete
 - `--logo jin.webp`: imagem no lugar do nome escrito no topo e no rodapé. Fica guardada na pasta da loja, então nas próximas vezes não precisa repetir

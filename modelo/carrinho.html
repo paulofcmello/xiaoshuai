@@ -6,7 +6,7 @@
 <title>Carrinho — {{NOME}}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="atacado.css?v=8">
+<link rel="stylesheet" href="atacado.css?v=10">
 </head>
 <body>
 <div class="strip" aria-hidden="true"><div id="strip"></div></div>
@@ -45,11 +45,11 @@ const save=()=>{try{localStorage.cart=JSON.stringify(cart)}catch{}};
 let byH={};
 
 // camisa + tamanho + nome/número iguais viram uma linha com quantidade
-const PERS={{PRECO_PERS}};  // preço da personalização; 0 = a combinar no WhatsApp
-const keyOf=c=>encodeURIComponent(JSON.stringify([c.h,c.size,c.nome||"",c.num||""]));
+const PERS={{PRECO_PERS}}, PATCH={{PRECO_PATCH}};  // personalização (0 = a combinar no WhatsApp) e preço por patch
+const keyOf=c=>encodeURIComponent(JSON.stringify([c.h,c.size,c.nome||"",c.num||"",c.patch||0]));
 const same=(c,k)=>keyOf(c)==k;
-const pers=c=>!!(c.nome||c.num), preco=c=>byH[c.h].p+(pers(c)?PERS:0);
-const persTxt=c=>[c.nome&&T("Nome","名字","Name")+" "+c.nome,c.num&&T("Nº","号码","No.")+" "+c.num].filter(Boolean).join(" · ");
+const pers=c=>!!(c.nome||c.num), preco=c=>byH[c.h].p+(pers(c)?PERS:0)+(c.patch||0)*PATCH;
+const persTxt=c=>[c.nome&&T("Nome","名字","Name")+" "+c.nome,c.num&&T("Nº","号码","No.")+" "+c.num,c.patch&&T("Patch","臂章","Patch")+" ×"+c.patch].filter(Boolean).join(" · ");
 function lines(){const m=new Map();cart.forEach(c=>{const k=keyOf(c);m.set(k,{...c,k,q:(m.get(k)?.q||0)+1})});return[...m.values()]}
 
 // sempre em inglês: o fornecedor não lê português. WhatsApp só aceita texto (sem fotos nem links com nome), então vai a URL do álbum
@@ -57,7 +57,7 @@ const brlEn=v=>"R$ "+v.toFixed(2);
 // frete em dólar por pedido: FRETE[n-1] para n camisas; acima da lista é grátis
 const COTACAO={{COTACAO}}, FRETE={{FRETE}}, GRATIS=FRETE.length+1, freteUsd=n=>FRETE[n-1]||0, frete=n=>Math.round(freteUsd(n)*COTACAO*100)/100;
 // link da página do pedido: o pedido vai codificado no próprio link (base64url de [hash, tamanho, nome, número, qtd])
-function orderLink(ls){const bytes=new TextEncoder().encode(JSON.stringify(ls.map(l=>[l.h,l.size,l.nome||"",l.num||"",l.q])));
+function orderLink(ls){const bytes=new TextEncoder().encode(JSON.stringify(ls.map(l=>[l.h,l.size,l.nome||"",l.num||"",l.q,l.patch||0])));
   const b=btoa(String.fromCharCode(...bytes)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
   return new URL("pedido.html",location.href).href.split("#")[0]+"#p="+b}
 function message(ls,sub){const n=cart.length,f=frete(n);
@@ -65,10 +65,12 @@ function message(ls,sub){const n=cart.length,f=frete(n);
     "📋 订单图片 Order with photos:",orderLink(ls),"",
     ...ls.map(l=>{const x=byH[l.h];return `• ${l.q}x ${x.te}${x.qe?" ("+x.qe+")":""} — size ${l.size}`
       +(pers(l)?` — CUSTOM: ${[l.nome&&"name "+l.nome,l.num&&"number "+l.num].filter(Boolean).join(", ")} (${PERS?"+"+brlEn(PERS)+" each":"price to confirm"})`:"")
+      +(l.patch?` — PATCH x${l.patch} (+${brlEn(l.patch*PATCH)} each shirt)`:"")
       +` — ${brlEn(preco(l)*l.q)}`+(x.u?`\n   ${x.u}`:"")}),
     "",`Shirts: ${brlEn(sub)} (${n} ${n==1?"shirt":"shirts"})`,
     `Shipping: ${f?brlEn(f):`free (${GRATIS}+ shirts)`}`,
-    `Total: ${brlEn(sub+f)}`].join("\n");
+    `Total: ${brlEn(sub+f)}`,
+    ...(ls.some(l=>l.patch)?["","📎 I'll send the patch photo here."]:[])].join("\n");
 }
 
 function render(){
@@ -79,7 +81,7 @@ function render(){
     <div class="items">${ls.map(l=>{const x=byH[l.h];if(!x)return"";return `
       <div class="item">
         <a href="camisa.html?id=${x.h}"><img src="fotos/all/${x.h}.webp" alt="${x.t}" width="96" height="96"></a>
-        <div><h2><a href="camisa.html?id=${x.h}">${T(x.t,x.tz,x.te)}</a></h2><p>${[T(x.q,x.qz,x.qe),T("Tamanho","尺码","Size")+" "+l.size].filter(Boolean).join(" · ")}</p>${pers(l)?`<p class="perstag">${persTxt(l)}</p>`:""}
+        <div><h2><a href="camisa.html?id=${x.h}">${T(x.t,x.tz,x.te)}</a></h2><p>${[T(x.q,x.qz,x.qe),T("Tamanho","尺码","Size")+" "+l.size].filter(Boolean).join(" · ")}</p>${pers(l)||l.patch?`<p class="perstag">${persTxt(l)}</p>`:""}
           <div class="qty"><button data-a="-" data-k="${l.k}" aria-label="${T("Diminuir","减少","Decrease")}">−</button><output>${l.q}</output><button data-a="+" data-k="${l.k}" aria-label="${T("Aumentar","增加","Increase")}">+</button></div></div>
         <div class="right">${brl(preco(l)*l.q)}<button class="rm" data-a="x" data-k="${l.k}">${T("Remover","删除","Remove")}</button></div>
       </div>`}).join("")}</div>
@@ -88,6 +90,7 @@ function render(){
       <div class="row"><span>${T("Frete","运费","Shipping")}</span><span>${f?brl(f):T("Grátis","免运费","Free")}</span></div>
       ${cart.length<GRATIS?`<p class="note" style="min-height:0;margin:0 0 4px">${T(`Frete grátis a partir de ${GRATIS} camisas`,`满 ${GRATIS} 件免运费`,`Free shipping from ${GRATIS} shirts`)}</p>`:""}
       ${!PERS&&cart.some(pers)?`<p class="note" style="min-height:0;margin:0 0 4px">${T("O valor da personalização é combinado no WhatsApp.","定制费用在 WhatsApp 上确认。","Customization price is confirmed on WhatsApp.")}</p>`:""}
+      ${cart.some(c=>c.patch)?`<p class="note" style="min-height:0;margin:0 0 4px;color:var(--red)">${T("Depois de enviar o pedido, mande no WhatsApp uma foto do patch que você quer.","发送订单后，请在 WhatsApp 上发一张你要的臂章图片。","After sending the order, send a photo of the patch you want on WhatsApp.")}</p>`:""}
       <div class="row total"><span>${T("Total","合计","Total")}</span><b>${brl(total)}</b></div>
       <a class="btn wa" id="wa" href="${WA}?text=${encodeURIComponent(message(ls,sub))}" target="_blank" rel="noopener">${T("Falar com fornecedor","联系供应商","Message the seller")}</a>
       <p class="note">${T("Abre o WhatsApp com seu pedido já escrito. É só enviar.","将打开 WhatsApp，订单已自动填写，直接发送即可。","Opens WhatsApp with your order already written. Just hit send.")}</p>

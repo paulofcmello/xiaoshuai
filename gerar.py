@@ -40,7 +40,7 @@ def escolher_destaque(cat):
     return cat[0]
 
 
-def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None, classico=True, pers=0):
+def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None, classico=True, pers=0, patch=0):
     total = len(cat)
     modelos = total if total < 100 else total // 100 * 100
     d = escolher_destaque(cat)
@@ -49,6 +49,7 @@ def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None,
         "{{LOGO}}": f'<img src="{imagem}" alt="{nome}">' if imagem else logo(nome),
         "{{WA}}": whatsapp,
         "{{PRECO_PERS}}": str(pers),
+        "{{PRECO_PATCH}}": str(patch),
         "{{CLASSICO_REDIRECT}}": '<script>try{if(localStorage.visual=="classico")location.replace("classico.html"+location.search+location.hash)}catch{}</script>' if classico else "",
         "{{CLASSICO_BOTAO}}": '    <a class="ico vis" href="classico.html" data-en="Classic look" data-zh="经典外观">Visual clássico</a>\n' if classico else "",
         "{{BANNER}}": f'<a class="bigbanner" href="#colecoes"><img src="{banner}" alt="{nome}"></a>' if banner else "",
@@ -110,6 +111,7 @@ def main():
     ap.add_argument("--preco-jogador", type=int, default=87, help="preço da versão jogador em reais (padrão 87)")
     ap.add_argument("--preco-retro", type=int, help="preço das retrô em reais (padrão: o mesmo da versão torcedor)")
     ap.add_argument("--personalizacao", type=float, default=0, help="preço de nome e número por peça, em reais (padrão 0: a combinar no WhatsApp)")
+    ap.add_argument("--patch", type=float, default=0, help="preço de cada patch, em reais; o cliente escolhe 0, 1 ou 2 (padrão 0: sem opção de patch)")
     ap.add_argument("--frete", default="5,4,3", help="frete em dólar com 1, 2, 3… camisas; depois disso é grátis (padrão 5,4,3)")
     ap.add_argument("--logo", type=Path, help="imagem que substitui o nome escrito no topo e no rodapé (fica guardada na pasta da loja)")
     ap.add_argument("--banner", type=Path, help="imagem larga (3:1) que substitui o topo da home (fica guardada na pasta da loja)")
@@ -176,7 +178,7 @@ def main():
     if a.sem_classico:
         (saida / "_sem-classico").touch()
     montar(saida, a.nome, wa, a.cotacao, frete, cat, imagem, banner, classico=not (saida / "_sem-classico").exists(),
-           pers=a.personalizacao)
+           pers=a.personalizacao, patch=a.patch)
     ligas = {}
     for x in cat:
         ligas[x["l"]] = ligas.get(x["l"], 0) + 1

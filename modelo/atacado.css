@@ -312,3 +312,6 @@ body.pedido{background:#EFEAE2 var(--noise)}
 .osum p{display:flex;justify-content:space-between;font-size:15px}
 .osum .otot{border-top:1px solid var(--line);padding-top:10px;font-size:18px}
 .osum .snote{justify-content:center;padding:4px 0 0}
+.patch{margin-top:18px}.patch .sizes span{min-width:0;padding:0 14px;font-size:13px}
+.patchnote{margin-top:10px;font-size:12px;color:var(--red);font-weight:600}
+.persf label{min-width:0}.persf input{width:100%;min-width:0}

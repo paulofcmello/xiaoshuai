@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="atacado.css?v=8">
+<link rel="stylesheet" href="atacado.css?v=10">
 </head>
 <body class="pedido">
 <header class="ohead"><span class="logo">{{LOGO}}</span><h1>订单 <small>Order</small></h1></header>
@@ -15,7 +15,7 @@
 
 <script>
 // página que o fornecedor abre pelo link da mensagem: o pedido vem no próprio link (#p=...), sem servidor
-const PERS={{PRECO_PERS}}, COTACAO={{COTACAO}}, FRETE={{FRETE}}, GRATIS=FRETE.length+1;
+const PERS={{PRECO_PERS}}, PATCH={{PRECO_PATCH}}, COTACAO={{COTACAO}}, FRETE={{FRETE}}, GRATIS=FRETE.length+1;
 const frete=n=>Math.round((FRETE[n-1]||0)*COTACAO*100)/100;
 const brl=v=>"R$ "+v.toLocaleString("pt-BR",{minimumFractionDigits:2});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
@@ -31,10 +31,10 @@ if(!itens||!itens.length){app.innerHTML=`<p class="snote">链接无效或订单�
 else fetch("catalog.json").then(r=>r.json()).then(all=>{
   const byH={};all.forEach(x=>byH[x.h]=x);
   let n=0,sub=0;
-  const cards=itens.map(([h,size,nome,num,q])=>{
+  const cards=itens.map(([h,size,nome,num,q,patch])=>{
     const x=byH[h];q=Math.max(1,+q||1);n+=q;
     if(!x)return `<article class="oc"><div class="ob"><p>${esc(h)} · 尺码 Size: ${esc(size)} · ×${q}</p><p class="snote">商品已下架 Item no longer in catalog</p></div></article>`;
-    const pl=(x.qe||"").split(" · ").includes("Player"), p=x.p+((nome||num)?PERS:0);sub+=p*q;
+    const pl=(x.qe||"").split(" · ").includes("Player"), p=x.p+((nome||num)?PERS:0)+(+patch||0)*PATCH;sub+=p*q;
     const ver=pl?"球员版 Player version":x.t.startsWith("Camisa")?"球迷版 Fan version":"";
     const extra=(x.qz||"").split(" · ").filter(v=>v&&v!="球员版").join(" · ");
     return `<article class="oc">
@@ -46,6 +46,7 @@ else fetch("catalog.json").then(r=>r.json()).then(all=>{
           <dt>尺码 Size</dt><dd>${esc(size)}</dd>
           ${nome?`<dt>名字 Name</dt><dd>${esc(nome)}</dd>`:""}
           ${num?`<dt>号码 Number</dt><dd>${esc(num)}</dd>`:""}
+          ${+patch?`<dt>臂章 Patch</dt><dd>×${+patch}</dd>`:""}
           <dt>数量 Qty</dt><dd>${q}</dd>
           <dt>价格 Price</dt><dd>${brl(p*q)}</dd>
         </dl>
@@ -56,6 +57,7 @@ else fetch("catalog.json").then(r=>r.json()).then(all=>{
     <p><span>球衣 Shirts (${n})</span><b>${brl(sub)}</b></p>
     <p><span>运费 Shipping</span><b>${f?brl(f):"免运费 Free"}</b></p>
     <p class="otot"><span>合计 Total</span><b>${brl(sub+f)}</b></p>
+    ${itens.some(i=>+i[5])?`<p class="snote" style="color:var(--red)">客户会发送臂章图片 Customer will send the patch photo</p>`:""}
     ${(!PERS&&itens.some(i=>i[2]||i[3]))?`<p class="snote">定制费用另议 Customization price to confirm</p>`:""}
   </section>`;
 });
