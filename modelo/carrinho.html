@@ -60,17 +60,11 @@ const COTACAO={{COTACAO}}, FRETE={{FRETE}}, GRATIS=FRETE.length+1, freteUsd=n=>F
 function orderLink(ls){const bytes=new TextEncoder().encode(JSON.stringify(ls.map(l=>[l.h,l.size,l.nome||"",l.num||"",l.q,l.patch||0])));
   const b=btoa(String.fromCharCode(...bytes)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
   return new URL("pedido.html",location.href).href.split("#")[0]+"#p="+b}
-function message(ls,sub){const n=cart.length,f=frete(n);
-  return ["Hi! I'd like to place this order from the {{NOME}} site:","",
-    "📋 订单图片 Order with photos:",orderLink(ls),"",
-    ...ls.map(l=>{const x=byH[l.h];return `• ${l.q}x ${x.te}${x.qe?" ("+x.qe+")":""} — size ${l.size}`
-      +(pers(l)?` — CUSTOM: ${[l.nome&&"name "+l.nome,l.num&&"number "+l.num].filter(Boolean).join(", ")} (${PERS?"+"+brlEn(PERS)+" each":"price to confirm"})`:"")
-      +(l.patch?` — PATCH x${l.patch} (+${brlEn(l.patch*PATCH)} each shirt)`:"")
-      +` — ${brlEn(preco(l)*l.q)}`+(x.u?`\n   ${x.u}`:"")}),
-    "",`Shirts: ${brlEn(sub)} (${n} ${n==1?"shirt":"shirts"})`,
-    `Shipping: ${f?brlEn(f):`free (${GRATIS}+ shirts)`}`,
-    `Total: ${brlEn(sub+f)}`,
-    ...(ls.some(l=>l.patch)?["","📎 I'll send the patch photo here."]:[])].join("\n");
+// só o link (fotos, tamanhos, nomes e números ficam na página do pedido), o frete e o total
+function message(ls,sub){const f=frete(cart.length);
+  return ["📋 订单 Order: "+orderLink(ls),
+    `运费 Shipping: ${f?brlEn(f):"免运费 Free"}`,
+    `合计 Total: ${brlEn(sub+f)}`].join("\n");
 }
 
 function render(){
