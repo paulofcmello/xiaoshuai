@@ -315,3 +315,4 @@ body.pedido{background:#EFEAE2 var(--noise)}
 .patch{margin-top:18px}.patch .sizes span{min-width:0;padding:0 14px;font-size:13px}
 .patchnote{margin-top:10px;font-size:12px;color:var(--red);font-weight:600}
 .persf label{min-width:0}.persf input{width:100%;min-width:0}
+.lupa{padding:10px;margin:-10px;border-radius:99px}.lupa:hover{color:var(--red)}

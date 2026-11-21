@@ -6,7 +6,7 @@
 <title>Camisa — {{NOME}}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="atacado.css?v=10">
+<link rel="stylesheet" href="atacado.css?v=11">
 </head>
 <body>
 <div class="strip" aria-hidden="true"><div id="strip"></div></div>
@@ -111,7 +111,7 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
   });
   // miniatura da camisa voa do botão até o carrinho do menu
   function fly(done){
-    const to=document.querySelector("nav.top .ico").getBoundingClientRect(),from=add.getBoundingClientRect();
+    const to=document.querySelector('nav.top a[href="carrinho.html"]').getBoundingClientRect(),from=add.getBoundingClientRect();
     if(matchMedia("(prefers-reduced-motion: reduce)").matches||!to.width||!window.Element.prototype.animate)return setTimeout(done,300);
     const g=document.createElement("img"),s=64;g.src=`fotos/all/${x.h}.webp`;g.alt="";g.className="flyer";
     g.style.left=from.left+from.width/2-s/2+"px";g.style.top=from.top+from.height/2-s/2+"px";document.body.append(g);
