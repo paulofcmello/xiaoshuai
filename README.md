@@ -24,6 +24,7 @@ No fim ele mostra o link da loja no ar. Opções:
 - `--cotacao 5.8`: reais por dólar, para converter o frete
 - `--logo jin.webp`: imagem no lugar do nome escrito no topo e no rodapé. Fica guardada na pasta da loja, então nas próximas vezes não precisa repetir
 - `--banner banner.webp`: imagem larga (proporção 3:1) no lugar do título do topo da home. Também fica guardada na pasta da loja
+- `--sem-classico`: tira a home antiga e o botão "Visual clássico". Também fica guardado na pasta da loja
 - `--slug outro-nome`: nome da pasta e do projeto na Vercel (padrão: o nome da loja sem acentos)
 - `--sem-publicar`: só monta a pasta, sem publicar
 

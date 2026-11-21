@@ -40,7 +40,7 @@ def escolher_destaque(cat):
     return cat[0]
 
 
-def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None):
+def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None, classico=True):
     total = len(cat)
     modelos = total if total < 100 else total // 100 * 100
     d = escolher_destaque(cat)
@@ -48,6 +48,8 @@ def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None)
         "{{NOME}}": nome,
         "{{LOGO}}": f'<img src="{imagem}" alt="{nome}">' if imagem else logo(nome),
         "{{WA}}": whatsapp,
+        "{{CLASSICO_REDIRECT}}": '<script>try{if(localStorage.visual=="classico")location.replace("classico.html"+location.search+location.hash)}catch{}</script>' if classico else "",
+        "{{CLASSICO_BOTAO}}": '    <a class="ico vis" href="classico.html" data-en="Classic look" data-zh="经典外观">Visual clássico</a>\n' if classico else "",
         "{{BANNER}}": f'<a class="bigbanner" href="#colecoes"><img src="{banner}" alt="{nome}"></a>' if banner else "",
         "{{COTACAO}}": str(cotacao),
         "{{FRETE}}": json.dumps(frete),
@@ -57,7 +59,11 @@ def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None)
         "{{MODELOS_ZH}}": numero(modelos, ","),
         "{{HERO}}": json.dumps({"n": d["t"], "z": d["tz"], "e": d["te"], "p": d["p"], "img": f"fotos/all/{d['h']}.webp"}, ensure_ascii=False),
     }
+    if not classico:
+        (saida / "classico.html").unlink(missing_ok=True)
     for p in PAGINAS:
+        if p == "classico.html" and not classico:
+            continue
         s = (RAIZ / "modelo" / p).read_text()
         for k, v in trocas.items():
             s = s.replace(k, v)
@@ -65,7 +71,7 @@ def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None)
         assert not sobrou, f"{p}: marcador sem valor {sobrou}"
         (saida / p).write_text(s)
     (saida / "catalog.json").write_text(json.dumps([{k: x[k] for k in CAMPOS if k in x} for x in cat], ensure_ascii=False, separators=(",", ":")))
-    (saida / ".vercelignore").write_text("_albuns.json\n")
+    (saida / ".vercelignore").write_text("_albuns.json\n_sem-classico\n")
 
 
 def amostra(url, n, vistos):
@@ -105,6 +111,7 @@ def main():
     ap.add_argument("--frete", default="5,4,3", help="frete em dólar com 1, 2, 3… camisas; depois disso é grátis (padrão 5,4,3)")
     ap.add_argument("--logo", type=Path, help="imagem que substitui o nome escrito no topo e no rodapé (fica guardada na pasta da loja)")
     ap.add_argument("--banner", type=Path, help="imagem larga (3:1) que substitui o topo da home (fica guardada na pasta da loja)")
+    ap.add_argument("--sem-classico", action="store_true", help="tira a home antiga e o botão de trocar de visual (fica guardado na pasta da loja)")
     ap.add_argument("--slug", help="nome da pasta e do projeto na Vercel (padrão: a partir do nome)")
     ap.add_argument("--sem-publicar", action="store_true", help="só gera a pasta, não publica")
     a = ap.parse_args()
@@ -159,7 +166,9 @@ def main():
         shutil.copy(a.banner, saida / ("banner" + a.banner.suffix.lower()))
     imagem = next((f.name for f in saida.glob("logo.*")), None)  # sem --logo, reaproveita o da última vez
     banner = next((f.name for f in saida.glob("banner.*")), None)
-    montar(saida, a.nome, wa, a.cotacao, frete, cat, imagem, banner)
+    if a.sem_classico:
+        (saida / "_sem-classico").touch()
+    montar(saida, a.nome, wa, a.cotacao, frete, cat, imagem, banner, classico=not (saida / "_sem-classico").exists())
     ligas = {}
     for x in cat:
         ligas[x["l"]] = ligas.get(x["l"], 0) + 1
