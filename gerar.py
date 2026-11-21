@@ -111,7 +111,7 @@ def main():
     ap.add_argument("--preco-jogador", type=int, default=87, help="preço da versão jogador em reais (padrão 87)")
     ap.add_argument("--preco-retro", type=int, help="preço das retrô em reais (padrão: o mesmo da versão torcedor)")
     ap.add_argument("--personalizacao", type=float, default=0, help="preço de nome e número por peça, em reais (padrão 0: a combinar no WhatsApp)")
-    ap.add_argument("--patch", type=float, default=0, help="preço de cada patch, em reais; o cliente escolhe 0, 1 ou 2 (padrão 0: sem opção de patch)")
+    ap.add_argument("--patch", type=float, default=0, help="preço de cada patch, em reais; o cliente escolhe de 0 a 4 (padrão 0: sem opção de patch)")
     ap.add_argument("--frete", default="5,4,3", help="frete em dólar com 1, 2, 3… camisas; depois disso é grátis (padrão 5,4,3)")
     ap.add_argument("--logo", type=Path, help="imagem que substitui o nome escrito no topo e no rodapé (fica guardada na pasta da loja)")
     ap.add_argument("--banner", type=Path, help="imagem larga (3:1) que substitui o topo da home (fica guardada na pasta da loja)")

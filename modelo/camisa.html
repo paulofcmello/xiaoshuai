@@ -67,7 +67,7 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
             <label>${T("Número","号码","Number")}<input id="pnum" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="10"></label></div>
             <p>${T("Deixe em branco se não quiser personalizar.","不需要定制请留空。","Leave blank if you don't want it.")}</p></details>
           ${PATCH?`<fieldset class="patch"><legend>${T("Tem patch?","要臂章吗？","Add a patch?")}</legend>
-            <div class="sizes">${[[0,T("Não","不要","No")],[1,"1 patch · + "+reais(PATCH)],[2,"2 patches · + "+reais(2*PATCH)]].map(([n,t])=>`<label><input type="radio" name="patch" value="${n}"${n?"":" checked"}><span>${t}</span></label>`).join("")}</div>
+            <div class="sizes">${[0,1,2,3,4].map(n=>[n,n?`${n} patch${n>1?"es":""} · + ${reais(n*PATCH)}`:T("Não","不要","No")]).map(([n,t])=>`<label><input type="radio" name="patch" value="${n}"${n?"":" checked"}><span>${t}</span></label>`).join("")}</div>
             <p class="patchnote" hidden>${T("Depois de fazer o pedido, mande no WhatsApp uma foto do patch que você quer.","下单后，请在 WhatsApp 上发一张你要的臂章图片。","After ordering, send a photo of the patch you want on WhatsApp.")}</p></fieldset>`:""}
           <button class="btn primary addbtn" id="add" aria-disabled="true" aria-describedby="hint">${T("Adicionar ao carrinho","加入购物车","Add to cart")}</button>
           <p class="hint" id="hint" aria-live="polite">${T("Escolha um tamanho para continuar","请先选择尺码","Choose a size to continue")}</p>
