@@ -108,7 +108,7 @@ function showcase(){
 }
 // a home só baixa dados/home.json: quantas camisas tem cada liga e 12 de cada uma; o resto fica nas páginas de liga
 let data=[],H={n:0,c:{},p:{}},tab;const cart=(()=>{try{return JSON.parse(localStorage.cart||"[]")}catch{return[]}})();document.getElementById("count").textContent=cart.length;const fmt=n=>n.toLocaleString("pt-BR");
-function strip(){const s=[T("Envio para todo o Brasil","全巴西配送","Shipping to all of Brazil"),T("Pix ou até 6x sem juros","Pix 或 6 期免息","Pix or 6 interest-free installments"),T("Personalize com nome e número","定制名字和号码","Custom name and number"),T("Tamanhos P ao 4XL","尺码 S 至 4XL","Sizes S to 4XL")].map(t=>`<span>${t}</span>`).join("");document.getElementById("strip").innerHTML=s.repeat(4)}
+function strip(){const s=[T("Envio para todo o Brasil","全巴西配送","Shipping to all of Brazil"),T("Pagamento no Pix","Pix 付款","Payment by Pix"),T("Personalize com nome e número","定制名字和号码","Custom name and number"),T("Tamanhos P ao 4XL","尺码 S 至 4XL","Sizes S to 4XL")].map(t=>`<span>${t}</span>`).join("");document.getElementById("strip").innerHTML=s.repeat(4)}
 // coleções: até 6 abas, com as 12 camisas de cada liga que já vêm escolhidas no home.json (uma por time primeiro)
 function collections(by){
   const keys=["brasileirao","premier","laliga","selecoes","retro","seriea"].filter(k=>by[k]).slice(0,6);if(!keys.includes(tab))tab=keys[0];

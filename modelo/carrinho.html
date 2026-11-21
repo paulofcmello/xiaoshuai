@@ -39,7 +39,7 @@ const lg=(()=>{try{return localStorage.lang||"pt"}catch{return"pt"}})();
 {const NEXT={pt:"en",en:"zh",zh:"pt"},BTN={pt:"EN",en:"中文",zh:"PT"},b=document.getElementById("lang");b.textContent=BTN[lg]||"EN";
   b.onclick=()=>{try{localStorage.lang=NEXT[lg]||"en"}catch{}const u=new URL(location.href);u.searchParams.delete("lang");location.replace(u)}}  // tira ?lang= senão ele volta o idioma antigo
 const T=(pt,cn,en)=>lg=="zh"?cn:lg=="en"?(en??pt):pt;
-document.getElementById("strip").innerHTML=[T("Envio para todo o Brasil","全巴西配送","Shipping to all of Brazil"),T("Pix ou até 6x sem juros","Pix 或 6 期免息","Pix or 6 interest-free installments"),T("Personalize com nome e número","定制名字和号码","Custom name and number"),T("Tamanhos P ao 4XL","尺码 S 至 4XL","Sizes S to 4XL")].map(t=>`<span>${t}</span>`).join("").repeat(4);
+document.getElementById("strip").innerHTML=[T("Envio para todo o Brasil","全巴西配送","Shipping to all of Brazil"),T("Pagamento no Pix","Pix 付款","Payment by Pix"),T("Personalize com nome e número","定制名字和号码","Custom name and number"),T("Tamanhos P ao 4XL","尺码 S 至 4XL","Sizes S to 4XL")].map(t=>`<span>${t}</span>`).join("").repeat(4);
 const brl=v=>"R$ "+v.toLocaleString("pt-BR",{minimumFractionDigits:2});
 const $=id=>document.getElementById(id);
 document.documentElement.lang={pt:"pt-BR",en:"en",zh:"zh-CN"}[lg]||"pt-BR";
