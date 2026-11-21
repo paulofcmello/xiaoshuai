@@ -10,8 +10,13 @@ from pathlib import Path
 from gerador import yupoo, classificar
 
 RAIZ = Path(__file__).resolve().parent
-PAGINAS = ["index.html", "classico.html", "camisa.html", "carrinho.html", "style.css", "atacado.css", "gaveta.js", "busca.js", "pedido.html"]
+PAGINAS = ["index.html", "classico.html", "camisa.html", "carrinho.html", "style.css", "atacado.css", "gaveta.js", "busca.js", "pedido.html", "dados.js", "liga.html"]
 CAMPOS = ["h", "n", "l", "t", "tz", "te", "q", "qz", "qe", "s", "p", "u", "sh"]
+LEVE = ["h", "n", "l", "t", "tz", "te", "q", "qz", "qe", "p", "sh"]  # o que um cartão precisa (sem tamanhos e link do álbum)
+LIGAS = ["brasileirao", "premier", "laliga", "seriea", "bundesliga", "ligue1", "portugal", "argentina", "liga-mx", "mls",
+         "saudi", "outras-ligas", "selecoes", "retro", "outros"]
+STAR = ["Flamengo", "Palmeiras", "Corinthians", "Manchester United", "Arsenal", "Liverpool", "Real Madrid", "Barcelona",
+        "Inter Milan", "Napoli", "Brasil", "Argentina"]
 
 
 def slug(nome):
@@ -38,6 +43,46 @@ def escolher_destaque(cat):
         if achou:
             return achou
     return cat[0]
+
+
+def _json(caminho, dado):
+    caminho.write_text(json.dumps(dado, ensure_ascii=False, separators=(",", ":")))
+
+
+def previa(itens, n=12):
+    """Um por time primeiro (times conhecidos antes), depois o resto; para a vitrine de cada liga na home."""
+    vistos, prim = set(), []
+    for x in itens:
+        if not x.get("sh") and x["n"] not in vistos:
+            vistos.add(x["n"])
+            prim.append(x)
+    prim.sort(key=lambda x: x["n"] not in STAR)
+    ids = {id(x) for x in prim}
+    return (prim + [x for x in itens if id(x) not in ids])[:n]
+
+
+def dados(saida, cat):
+    """Catálogo em arquivos pequenos, para o celular não ler tudo de uma vez:
+    home.json (contagem e 12 por liga), l-<liga>.json (a liga inteira), i-<xx>.json (camisas pelos 2 primeiros
+    caracteres do hash, para página da camisa, carrinho e pedido) e busca.json (só o que a busca usa)."""
+    d = saida / "dados"
+    shutil.rmtree(d, ignore_errors=True)
+    d.mkdir()
+    leve = lambda x: {k: x[k] for k in LEVE if k in x}
+    por_liga = {}
+    for x in cat:
+        por_liga.setdefault(x["l"], []).append(x)
+    ordem = [k for k in LIGAS if k in por_liga] + [k for k in por_liga if k not in LIGAS]
+    _json(d / "home.json", {"n": len(cat), "c": {k: len(por_liga[k]) for k in ordem},
+                            "p": {k: [leve(x) for x in previa(por_liga[k])] for k in ordem}})
+    for k in ordem:
+        _json(d / f"l-{k}.json", [leve(x) for x in por_liga[k]])
+    shards = {}
+    for x in cat:
+        shards.setdefault(x["h"][:2].lower(), []).append({k: x[k] for k in CAMPOS if k in x})
+    for k, v in shards.items():
+        _json(d / f"i-{k}.json", v)
+    _json(d / "busca.json", [[x["h"], x["n"], x["t"], x["te"], x["tz"], x.get("q", ""), x.get("qe", ""), x["p"], x.get("sh", 0)] for x in cat])
 
 
 def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None, classico=True, pers=0, patch=0):
@@ -72,8 +117,10 @@ def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None,
         sobrou = re.findall(r"\{\{[A-Z_]+\}\}", s)
         assert not sobrou, f"{p}: marcador sem valor {sobrou}"
         (saida / p).write_text(s)
-    (saida / "catalog.json").write_text(json.dumps([{k: x[k] for k in CAMPOS if k in x} for x in cat], ensure_ascii=False, separators=(",", ":")))
-    (saida / ".vercelignore").write_text("_albuns.json\n_sem-classico\n")
+    # catalog.json inteiro: só a home clássica lê; fica na pasta (para gerar de novo) mas só vai pro ar com ela
+    _json(saida / "catalog.json", [{k: x[k] for k in CAMPOS if k in x} for x in cat])
+    dados(saida, cat)
+    (saida / ".vercelignore").write_text("_albuns.json\n_sem-classico\n" + ("" if classico else "catalog.json\n"))
 
 
 def amostra(url, n, vistos):

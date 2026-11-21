@@ -7,12 +7,13 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="atacado.css?v=11">
+<link rel="stylesheet" href="atacado.css?v=12">
 </head>
 <body class="pedido">
 <header class="ohead"><span class="logo">{{LOGO}}</span><h1>订单 <small>Order</small></h1></header>
 <main class="order" id="app"><p class="snote">加载中… Loading…</p></main>
 
+<script src="dados.js?v=1"></script>
 <script>
 // página que o fornecedor abre pelo link da mensagem: o pedido vem no próprio link (#p=...), sem servidor
 const PERS={{PRECO_PERS}}, PATCH={{PRECO_PATCH}}, COTACAO={{COTACAO}}, FRETE={{FRETE}}, GRATIS=FRETE.length+1;
@@ -28,8 +29,7 @@ function ler(){
 addEventListener("hashchange",()=>location.reload());  // outro pedido na mesma aba
 const app=document.getElementById("app"), itens=ler();
 if(!itens||!itens.length){app.innerHTML=`<p class="snote">链接无效或订单为空。<br>This order link is invalid or empty.</p>`}
-else fetch("catalog.json").then(r=>r.json()).then(all=>{
-  const byH={};all.forEach(x=>byH[x.h]=x);
+else Dados.itens(itens.map(i=>i[0])).then(byH=>{
   let n=0,sub=0;
   const cards=itens.map(([h,size,nome,num,q,patch])=>{
     const x=byH[h];q=Math.max(1,+q||1);n+=q;

@@ -49,8 +49,9 @@
     el.hidden = false; document.documentElement.style.overflow = "hidden";
     void el.offsetWidth; el.classList.add("on");  // reflow: a transição de entrada roda mesmo sem quadros de animação
     q.focus(); render();
-    if (!all) fetch("catalog.json").then(r => r.json()).then(d => {
-      all = d; idx = d.map(x => norm([x.t, x.te, x.tz, x.n, x.q, x.qe].join(" ")));
+    if (!all) Dados.busca().then(d => {  // [hash, time, título pt, en, zh, versão pt, en, preço, short]
+      all = d.map(([h, n, t, te, tz, q, qe, p, sh]) => ({ h, n, t, te, tz, q, qe, p, sh }));
+      idx = all.map(x => norm([x.t, x.te, x.tz, x.n, x.q, x.qe].join(" ")));
       render();
     });
   }

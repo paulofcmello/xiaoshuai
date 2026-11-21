@@ -47,6 +47,7 @@ Um catálogo de ~3.600 camisas leva alguns minutos, quase todo o tempo baixando 
 - `gerador/classificar.py`: tira time, liga, modelo, temporada e tamanhos do título de cada álbum
 - `modelo/`: as páginas, com marcadores como `{{NOME}}` e `{{WA}}`. A home tem dois visuais: `index.html` (o novo) e `classico.html`. Um botão no menu troca entre eles, e o navegador do visitante guarda a escolha
 - `sites/<loja>/`: cada loja gerada, fora do git por causa das fotos
+- `sites/<loja>/dados/`: o catálogo dividido em arquivos pequenos para o celular não baixar tudo: `home.json` (12 camisas por liga), `l-<liga>.json` (a página de cada liga mostra 48 por vez), `i-<xx>.json` (camisas pelo começo do código, para a página da camisa, o carrinho e o pedido) e `busca.json` (só abre quando alguém usa a lupa)
 
 Para mudar o visual de todas as lojas, edite `modelo/` e gere de novo. Como as fotos já estão baixadas, a segunda vez é rápida.
 

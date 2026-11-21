@@ -6,7 +6,7 @@
 <title>Camisa — {{NOME}}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="atacado.css?v=11">
+<link rel="stylesheet" href="atacado.css?v=12">
 </head>
 <body>
 <div class="strip" aria-hidden="true"><div id="strip"></div></div>
@@ -27,6 +27,7 @@
   <div class="legal">© {{NOME}} · Mockup de demonstração · Demo · 演示样稿</div>
 </div></footer>
 
+<script src="dados.js?v=1"></script>
 <script>
 try{const q=new URLSearchParams(location.search).get("lang");if(["pt","en","zh"].includes(q))localStorage.lang=q}catch{}
 const lg=(()=>{try{return localStorage.lang||"pt"}catch{return"pt"}})();
@@ -37,7 +38,6 @@ const T=(pt,cn,en)=>lg=="zh"?cn:lg=="en"?(en??pt):pt;
 const PERS={{PRECO_PERS}}, PATCH={{PRECO_PATCH}};  // personalização (0 = a combinar) e preço por patch (0 = sem opção de patch)
 const reais=v=>"R$ "+v.toLocaleString("pt-BR",{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2});
 document.getElementById("strip").innerHTML=[T("Envio para todo o Brasil","全巴西配送","Shipping to all of Brazil"),T("Pix ou até 6x sem juros","Pix 或 6 期免息","Pix or 6 interest-free installments"),T("Personalize com nome e número","定制名字和号码","Custom name and number"),T("Tamanhos P ao 4XL","尺码 S 至 4XL","Sizes S to 4XL")].map(t=>`<span>${t}</span>`).join("").repeat(4);
-const L={brasileirao:["Brasileirão","巴西甲级联赛"],premier:["Premier League","英超"],laliga:["La Liga","西甲"],seriea:["Serie A","意甲"],bundesliga:["Bundesliga","德甲"],ligue1:["Ligue 1","法甲"],portugal:["Liga Portugal","葡超"],argentina:["Argentina","阿根廷联赛"],"liga-mx":["Liga MX","墨西哥联赛"],mls:["MLS","美职联"],saudi:["Saudi Pro League","沙特联赛"],"outras-ligas":["Outras ligas","其他联赛","Other leagues"],selecoes:["Seleções","国家队","National teams"],retro:["Retrô","复古球衣","Retro"],outros:["Outros","其他","Other"]};
 const read=()=>{try{return JSON.parse(localStorage.cart||"[]")}catch{return[]}};
 let cart=read();
 const $=id=>document.getElementById(id);
@@ -47,16 +47,15 @@ document.documentElement.lang={pt:"pt-BR",en:"en",zh:"zh-CN"}[lg]||"pt-BR";
 if(lg!="pt")document.querySelectorAll("[data-zh]").forEach(e=>e.innerHTML=e.dataset[lg]??e.innerHTML);
 
 const id=new URLSearchParams(location.search).get("id");
-fetch("catalog.json").then(r=>r.json()).then(all=>{
-  const x=all.find(i=>i.h==id);
+Promise.all([Dados.itens([id||""]),Dados.home().catch(()=>({c:{},p:{}}))]).then(([m,h])=>{
+  const x=m[id];
   if(!x){$("app").innerHTML=`<div class="wrap missing"><h1 style="font-size:56px">${T("Camisa não encontrada","找不到这件球衣","Shirt not found")}</h1><p style="margin:16px 0 28px;color:var(--muted)">${T("O link pode estar errado ou a camisa saiu do catálogo.","链接可能有误，或该球衣已下架。","The link may be wrong or the shirt is no longer in the catalog.")}</p><a class="btn primary" href="index.html#loja">${T("Voltar ao catálogo","返回目录","Back to catalog")}</a></div>`;return}
   const lgn=T(...L[x.l]);
   document.title=`${T(x.t,x.tz,x.te)} — {{NOME}}`;
-  const rel=all.filter(i=>i.l==x.l&&i.h!=x.h);
-  const start=Math.max(0,all.indexOf(x)%Math.max(1,rel.length-6));
+  const rel=(h.p[x.l]||[]).filter(i=>i.h!=x.h).slice(0,6),total=h.c[x.l]||rel.length+1;
   $("app").innerHTML=`
   <section class="pdp"><div class="wrap">
-    <a class="crumb" href="index.html#l-${x.l}">← ${lgn}</a>
+    <a class="crumb" href="liga.html?l=${x.l}">← ${lgn}</a>
     <div class="grid2">
       <div class="shot"><img src="fotos/all/${x.h}.webp" alt="${x.t}" width="440" height="440"></div>
       <div class="buy">
@@ -84,8 +83,8 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
     </div>
   </div></section>
   ${rel.length?`<section class="related"><div class="wrap">
-    <div class="head"><h2>${T("Mais da "+lgn,"更多"+lgn,"More from "+lgn)}</h2><a class="btn ghost" href="index.html#l-${x.l}">${T("Ver todas","查看全部","See all")} (${rel.length+1})</a></div>
-    <div class="grid">${rel.slice(start,start+6).map(r=>`<a class="card" href="camisa.html?id=${r.h}"><div class="pic"><img src="fotos/all/${r.h}.webp" alt="${T(r.t,r.tz,r.te)}" loading="lazy" width="440" height="440"></div><div class="info"><h3>${T(r.t,r.tz,r.te)}</h3>${T(r.q,r.qz,r.qe)?`<div class="meta">${T(r.q,r.qz,r.qe)}</div>`:""}<div class="price">R$ ${r.p}</div></div></a>`).join("")}</div>
+    <div class="head"><h2>${T("Mais da "+lgn,"更多"+lgn,"More from "+lgn)}</h2><a class="btn ghost" href="liga.html?l=${x.l}">${T("Ver todas","查看全部","See all")} (${total})</a></div>
+    <div class="grid">${rel.map(r=>cardHTML(r,T)).join("")}</div>
   </div></section>`:""}`;
 
   const f=$("f"),add=$("add"),hint=$("hint"),pn=$("pnome"),pu=$("pnum");
@@ -124,7 +123,7 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
   }
 });
 </script>
-<script src="gaveta.js?v=4"></script>
-<script src="busca.js?v=2"></script>
+<script src="gaveta.js?v=5"></script>
+<script src="busca.js?v=3"></script>
 </body>
 </html>

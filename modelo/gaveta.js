@@ -55,11 +55,12 @@
   }
 
   function open() {
+    if (byH && read().some(c => !byH[c.h])) byH = null;  // camisa nova no carrinho: carrega antes de mostrar (senão ela some)
     el.hidden = false; render();
     void el.offsetWidth; el.classList.add("on");  // reflow: a transição de entrada roda mesmo sem quadros de animação
     document.documentElement.style.overflow = "hidden";
     el.querySelector(".dclose").focus();
-    if (!byH) fetch("catalog.json").then(r => r.json()).then(all => { byH = {}; all.forEach(x => byH[x.h] = x); render() });
+    Dados.itens(read().map(c => c.h)).then(m => { byH = { ...byH, ...m }; render() });  // só as camisas do carrinho
   }
   function close() {
     el.classList.remove("on"); document.documentElement.style.overflow = "";
