@@ -53,5 +53,5 @@ Para mudar o visual de todas as lojas, edite `modelo/` e gere de novo. Como as f
 
 - Liga e modelo saem de palavras-chave nos títulos. Títulos estranhos ou times que o classificador não conhece vão para "Outros".
 - Só três preços: torcedor, jogador e retrô (a versão jogador sai do título do álbum). Kit infantil, agasalho, personalização, patch e tamanhos grandes não têm preço próprio.
-- Os textos de entrega, personalização em 48 h e troca grátis são iguais em todas as lojas e não foram combinados com nenhum revendedor.
+- Os textos de entrega e personalização em 48 h são iguais em todas as lojas e não foram combinados com nenhum revendedor.
 - O plano grátis da Vercel tem limites de uso. Se muitas lojas forem para o ar, talvez seja preciso um plano pago ou outra hospedagem.
