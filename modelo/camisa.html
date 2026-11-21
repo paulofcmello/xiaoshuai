@@ -13,7 +13,7 @@
 <nav class="top"><div class="wrap">
   <a class="logo" href="index.html">{{LOGO}}</a>
   <div class="links"><a href="index.html" data-en="Home" data-zh="首页">Página inicial</a><a href="index.html#l-brasileirao" data-en="Brazilian league" data-zh="巴甲">Brasileirão</a><a href="index.html#l-premier" data-en="International" data-zh="国际">Internacionais</a><a href="index.html#l-selecoes" data-en="National teams" data-zh="国家队">Seleções</a><a href="index.html#l-retro" data-en="Retro" data-zh="复古">Retrôs</a><a href="index.html#como" data-en="How it works" data-zh="购买流程">Como comprar</a></div>
-  <div class="navr"><a class="ico" href="carrinho.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="lbl" id="cartlabel">Carrinho</span><b id="count">0</b></a></div>
+  <div class="navr"><button class="ico" id="lang" aria-label="Mudar idioma / Language / 切换语言">EN</button><a class="ico" href="carrinho.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="lbl" id="cartlabel">Carrinho</span><b id="count">0</b></a></div>
 </div></nav>
 
 <main id="app"></main>
@@ -28,7 +28,11 @@
 </div></footer>
 
 <script>
+try{const q=new URLSearchParams(location.search).get("lang");if(["pt","en","zh"].includes(q))localStorage.lang=q}catch{}
 const lg=(()=>{try{return localStorage.lang||"pt"}catch{return"pt"}})();
+// botão de idioma: pt → en → zh; guarda a escolha e recarrega a página no idioma novo
+{const NEXT={pt:"en",en:"zh",zh:"pt"},BTN={pt:"EN",en:"中文",zh:"PT"},b=document.getElementById("lang");b.textContent=BTN[lg]||"EN";
+  b.onclick=()=>{try{localStorage.lang=NEXT[lg]||"en"}catch{}const u=new URL(location.href);u.searchParams.delete("lang");location.replace(u)}}  // tira ?lang= senão ele volta o idioma antigo
 const T=(pt,cn,en)=>lg=="zh"?cn:lg=="en"?(en??pt):pt;
 const PERS={{PRECO_PERS}}, PATCH={{PRECO_PATCH}};  // personalização (0 = a combinar) e preço por patch (0 = sem opção de patch)
 const reais=v=>"R$ "+v.toLocaleString("pt-BR",{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2});
