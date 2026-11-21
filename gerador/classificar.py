@@ -663,6 +663,69 @@ Indonésia = indonesian
 Malásia = malaysian
 Israel = israeli
 Nova Zelândia = new zealander
+@brasileirao
+Flamengo = 佛拉门戈, 弗拉明戈, 佛拉明戈
+Vasco da Gama = 达伽马
+@laliga
+Barcelona = 巴塞
+@premier
+Aston Villa = 阿斯顿
+Ipswich Town = 伊普斯维奇, 伊普维斯
+Tottenham = 热剌
+@liga-mx
+Chivas = 芝华士, 芝华仕
+Atlas = 阿特拉斯
+Leon = 莱昂
+Monterrey = 蒙德雷
+Puebla = 普埃布拉
+@portugal
+Sporting CP = 里斯本
+@bundesliga
+RB Leipzig = 菜比锡, 菜比特, 莱比特
+@outras-ligas
+Trabzonspor = 特拉布宗
+Millonarios = 百万富翁
+Young Boys = 青年人
+@seriea
+Como = 科莫
+@ligue1
+Lille = 里尔
+Monaco = 摩纳
+@saudi
+Al Qadsiah = 库迪西亚
+Al Ettifaq = 达曼协作, 协作
+@mls
+LA Galaxy = 银河
+Orlando City = 奥兰多
+@selecoes
+Argélia = 阿尔及利亚
+Mali = 马里
+Nigéria = 尼日利亚
+Arábia Saudita = 沙特
+Marrocos = 摩洛哥
+Costa do Marfim = 科特迪瓦, 科特
+Gana = 加纳
+Egito = 埃及
+Iraque = 伊拉克
+Jordânia = 约旦
+Palestina = 巴勒斯坦
+Jamaica = 牙买加
+Noruega = 挪威
+Polônia = 波兰
+Turquia = 土耳其
+Canadá = 加拿大
+Peru = 秘鲁
+Catar = 卡塔尔
+África do Sul = 南非
+Senegal = 塞内加尔
+Camarões = 喀麦隆
+Curaçao = 库拉索
+Malásia = 马来西亚
+Equador = 厄瓜多尔, 瓜多尔
+Cabo Verde = 佛得角, 弗得角, 佛拉角
+País de Gales = 威尔士
+Espanha = 西班
+Japão = 日本
 """
 
 _CJK = r"一-鿿"
@@ -676,8 +739,12 @@ def _norm(s):
     return s
 
 
+def _cjk_gap(s):
+    return re.sub(rf"(?<=[{_CJK}])(?=[a-z0-9])|(?<=[a-z0-9])(?=[{_CJK}])", " ", s)
+
+
 def _alias_norm(s):
-    s = _norm(s).strip()
+    s = _cjk_gap(_norm(s)).strip()
     return s if re.search(rf"[{_CJK}]", s) else re.sub(r"[^a-z0-9]+", " ", s).strip()
 
 
@@ -699,7 +766,7 @@ _ASCII = re.compile(r"^[a-z0-9 ]+$")
 
 
 def _find_team(title):
-    t = _norm(title)
+    t = _cjk_gap(_norm(title))
     t = re.sub(r"(?<=\d)(?=[a-z])|(?<=[a-z])(?=\d)", " ", t)  # "24/25Arsenal"
     text = " " + re.sub(r"[^a-z0-9" + _CJK + r"]+", " ", t).strip() + " "
     for weak in (False, True):  # weak aliases only when nothing else matches
@@ -773,7 +840,7 @@ def _has(pat, t):
 
 def _kit(raw):
     t = _norm(raw)
-    t = re.sub(rf"(?<=[{_CJK}])(?=[a-z0-9])|(?<=[a-z0-9])(?=[{_CJK}])", " ", t)  # "短裤S" -> "短裤 s": senão a borda latina falha
+    t = _cjk_gap(t)  # "短裤S" -> "短裤 s": senão a borda latina falha
     return re.sub(r"[^a-z0-9#" + _CJK + r"]+", " ", t)
 
 
@@ -847,4 +914,9 @@ if __name__ == "__main__":
     assert "sh" not in t("Short Women's 2026/27 Flamengo Away Jersey S-XXL")
     assert t("Windbreaker Fluminense red pants S-XXL")["t"].startswith("Jaqueta")
     assert t("25/26 Flamengo training pants S-XXL")["t"] == "Calça Flamengo 25/26"
+    assert t("球员:25-26佛拉门戈二客")["l"] == "brasileirao"
+    assert t("S-3XL达伽马主")["n"] == "Vasco da Gama"
+    assert t("26-27AC主S一2XL")["n"] == "AC Milan"
+    assert t("26-27巴塞特别版S一2XL")["n"] == "Barcelona"
+    assert t("球员26.27阿尔及利亚客S一2XL")["n"] == "Argélia"
     print("ok")
