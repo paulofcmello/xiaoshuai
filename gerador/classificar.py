@@ -27,6 +27,12 @@ KIT_RE = {
     "Away": r"away|second|2nd|客场|客",
     "Home": r"home|主场|主",
 }
+# peças de baixo: vencem o tipo de camisa (exceto jaqueta/moletom, que podem vir com calça)
+# "short" sozinho não entra: "Short Women's Jersey" é camisa feminina curta
+BOTTOM = [("Short", "短裤", "Shorts", r"shorts|calc(ao|oes)|bermudas?|短裤|单裤|球裤"),
+          ("Calça", "长裤", "Pants", r"pants|trousers|joggers?|calcas?|长裤|裤子|卫裤|运动裤|紧身裤")]
+SIDE = {"Home": ("1", "主场", "Home"), "Away": ("2", "客场", "Away"), "Third": ("3", "第三客场", "Third"),
+        "Fourth": ("4", "第四客场", "Fourth")}
 QUAL_RE = {
     "Player": r"play?e?rs?|球员",
     "Kids": r"kids?|child(ren)?|baby|youth|boys?|儿童|童装|孩子|童",
@@ -321,7 +327,7 @@ Juarez = fc juarez, juarez
 Mazatlan = mazatlan
 Atletico San Luis = atletico san luis, san luis
 @mls
-Inter Miami = miami, 迈阿密国际
+Inter Miami = miami, 迈阿密国际, 迈阿密
 LA Galaxy = galaxy, la galaxy, 洛杉矶银河
 LAFC = lafc, los angeles fc
 Atlanta United = atlanta united
@@ -752,7 +758,7 @@ def _sizes(title, kids):
         ms = re.findall(r"(?<!\d)(1[6-9])\s*#?\s*[-~—]+\s*#?(1[6-9]|2\d|30)(?!\d)", title)
         mx = int(ms[-1][1]) if ms else 28  # last match: the first one may be the season
         return [str(i) for i in range(16, max(mx, 16) + 1, 2)]
-    ms = re.findall(r"(?<![A-Za-z'])" + _SZ + r"\s*[-~—–to]+\s*" + _SZ + r"(?![A-Za-z])", title, re.I)
+    ms = re.findall(r"(?<![A-Za-z'])" + _SZ + r"\s*[-~—–一to]+\s*" + _SZ + r"(?![A-Za-z])", title, re.I)
     if ms:
         a, b = (_sz(x) for x in ms[-1])
         if a in SIZES and b in SIZES and SIZES.index(a) <= SIZES.index(b):
@@ -767,6 +773,7 @@ def _has(pat, t):
 
 def _kit(raw):
     t = _norm(raw)
+    t = re.sub(rf"(?<=[{_CJK}])(?=[a-z0-9])|(?<=[a-z0-9])(?=[{_CJK}])", " ", t)  # "短裤S" -> "短裤 s": senão a borda latina falha
     return re.sub(r"[^a-z0-9#" + _CJK + r"]+", " ", t)
 
 
@@ -780,6 +787,11 @@ def _build(title, n, league, forced_retro=False):
     retro = forced_retro or found["Retro"] or (year is not None and year < 2015)
     found["Retro"] = retro
     main = next(((pt, zh, EN.get(k, k)) for k, pt, zh in MAIN if found[k]), ("Camisa", "球衣", "Jersey"))
+    bottom = next((b for b in BOTTOM if _has(b[3], ts)), None)
+    if bottom and not (found["Jacket"] or found["Hoodie"]):
+        side = next((SIDE[k] for k in ("Fourth", "Third", "Away", "Home") if found[k]), None)
+        main = (f"{bottom[0]} {side[0]}" if side else bottom[0], (side[1] if side else "") + bottom[1],
+                (side[2] + " " if side else "") + bottom[2])
     qs = [(pt, zh, k.title()) for k, pt, zh in QUAL if qual[k]]
     return {
         "n": n, "l": "retro" if retro else league,
@@ -788,6 +800,7 @@ def _build(title, n, league, forced_retro=False):
         "te": f"{n} " + (season + " " if season else "") + main[2],
         "q": " · ".join(q[0] for q in qs), "qz": " · ".join(q[1] for q in qs), "qe": " · ".join(q[2] for q in qs),
         "s": _sizes(title, kids),
+        **({"sh": 1} if bottom else {}),  # short/calça fica fora da vitrine da home
     }
 
 
@@ -817,3 +830,21 @@ def classify_all(items):
             c = _build(it["t"], _clean(it["t"]), "outros")
         out.append({**c, "h": it["h"]})
     return out
+
+
+if __name__ == "__main__":
+    def t(title):
+        return classify(title)
+    assert t("26-27阿森纳客短裤S一2XL")["t"] == "Short 2 Arsenal 26/27"
+    assert t("26-27阿森纳客短裤S一2XL")["te"] == "Arsenal 26/27 Away Shorts"
+    assert t("26-27阿斯顿维拉主场单裤S一3XL")["t"] == "Short 1 Aston Villa 26/27"
+    assert t("26-27阿斯顿维拉主场单裤S一3XL")["s"][-1] == "3XL"
+    assert t("26.皇马长裤S一3XL")["t"] == "Calça Real Madrid"
+    assert t("26-27迈阿密客场单裤S一3XL")["n"] == "Inter Miami"
+    assert t("Barcelona 25/26 Home Shorts S-XXL")["t"] == "Short 1 Barcelona 25/26"
+    assert t("Barcelona 25/26 Home Shorts S-XXL")["sh"] == 1
+    assert t("Short Women's 2026/27 Flamengo Away Jersey S-XXL")["t"] == "Camisa 2 Flamengo 26/27"
+    assert "sh" not in t("Short Women's 2026/27 Flamengo Away Jersey S-XXL")
+    assert t("Windbreaker Fluminense red pants S-XXL")["t"].startswith("Jaqueta")
+    assert t("25/26 Flamengo training pants S-XXL")["t"] == "Calça Flamengo 25/26"
+    print("ok")

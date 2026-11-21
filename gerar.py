@@ -136,13 +136,10 @@ def main():
     print("2/4 Separando por liga e modelo")
     cat = classificar.classify_all(itens)
     links = {i["h"]: i.get("u") or "" for i in itens}
-    shorts = {i["h"] for i in itens if re.search(r"(?i)\bshorts\b", i["t"])}
     for x in cat:
         x["p"] = (a.preco_jogador if "Player" in x["qe"].split(" · ")
                   else a.preco_retro if x["l"] == "retro" and a.preco_retro else a.preco)
         x["u"] = links[x["h"]]
-        if x["h"] in shorts:  # o classificador apaga "Shorts" do título; marca para tirar da capa
-            x["sh"] = 1
 
     print("3/4 Baixando fotos (pula as que já existem)")
     falhas = set(yupoo.download(itens, saida / "fotos" / "all"))
