@@ -10,7 +10,7 @@ from pathlib import Path
 from gerador import yupoo, classificar
 
 RAIZ = Path(__file__).resolve().parent
-PAGINAS = ["index.html", "classico.html", "camisa.html", "carrinho.html", "style.css"]
+PAGINAS = ["index.html", "classico.html", "camisa.html", "carrinho.html", "style.css", "atacado.css"]
 CAMPOS = ["h", "n", "l", "t", "tz", "te", "q", "qz", "qe", "s", "p", "u", "sh"]
 
 
@@ -40,7 +40,7 @@ def escolher_destaque(cat):
     return cat[0]
 
 
-def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None):
+def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None):
     total = len(cat)
     modelos = total if total < 100 else total // 100 * 100
     d = escolher_destaque(cat)
@@ -48,6 +48,7 @@ def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None):
         "{{NOME}}": nome,
         "{{LOGO}}": f'<img src="{imagem}" alt="{nome}">' if imagem else logo(nome),
         "{{WA}}": whatsapp,
+        "{{BANNER}}": f'<a class="bigbanner" href="#colecoes"><img src="{banner}" alt="{nome}"></a>' if banner else "",
         "{{COTACAO}}": str(cotacao),
         "{{FRETE}}": json.dumps(frete),
         "{{TOTAL}}": numero(total, "."),
@@ -103,6 +104,7 @@ def main():
     ap.add_argument("--preco-retro", type=int, help="preço das retrô em reais (padrão: o mesmo da versão torcedor)")
     ap.add_argument("--frete", default="5,4,3", help="frete em dólar com 1, 2, 3… camisas; depois disso é grátis (padrão 5,4,3)")
     ap.add_argument("--logo", type=Path, help="imagem que substitui o nome escrito no topo e no rodapé (fica guardada na pasta da loja)")
+    ap.add_argument("--banner", type=Path, help="imagem larga (3:1) que substitui o topo da home (fica guardada na pasta da loja)")
     ap.add_argument("--slug", help="nome da pasta e do projeto na Vercel (padrão: a partir do nome)")
     ap.add_argument("--sem-publicar", action="store_true", help="só gera a pasta, não publica")
     a = ap.parse_args()
@@ -116,6 +118,8 @@ def main():
         sys.exit(f"Frete inválido: {a.frete!r} (use valores em dólar separados por vírgula, ex.: 5,4,3)")
     if a.logo and not a.logo.is_file():
         sys.exit(f"Logo não encontrado: {a.logo}")
+    if a.banner and not a.banner.is_file():
+        sys.exit(f"Banner não encontrado: {a.banner}")
     nome_slug = a.slug or slug(a.nome)
     saida = RAIZ / "sites" / nome_slug
     (saida / "fotos" / "all").mkdir(parents=True, exist_ok=True)
@@ -152,8 +156,13 @@ def main():
         for velho in saida.glob("logo.*"):
             velho.unlink()
         shutil.copy(a.logo, saida / ("logo" + a.logo.suffix.lower()))
+    if a.banner:
+        for velho in saida.glob("banner.*"):
+            velho.unlink()
+        shutil.copy(a.banner, saida / ("banner" + a.banner.suffix.lower()))
     imagem = next((f.name for f in saida.glob("logo.*")), None)  # sem --logo, reaproveita o da última vez
-    montar(saida, a.nome, wa, a.cotacao, frete, cat, imagem)
+    banner = next((f.name for f in saida.glob("banner.*")), None)
+    montar(saida, a.nome, wa, a.cotacao, frete, cat, imagem, banner)
     ligas = {}
     for x in cat:
         ligas[x["l"]] = ligas.get(x["l"], 0) + 1

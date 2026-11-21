@@ -23,6 +23,7 @@ No fim ele mostra o link da loja no ar. Opções:
 - `--frete 5,4,3`: frete em dólar com 1, 2, 3… camisas; com mais camisas que a lista, é grátis (padrão 5,4,3)
 - `--cotacao 5.8`: reais por dólar, para converter o frete
 - `--logo jin.webp`: imagem no lugar do nome escrito no topo e no rodapé. Fica guardada na pasta da loja, então nas próximas vezes não precisa repetir
+- `--banner banner.webp`: imagem larga (proporção 3:1) no lugar do título do topo da home. Também fica guardada na pasta da loja
 - `--slug outro-nome`: nome da pasta e do projeto na Vercel (padrão: o nome da loja sem acentos)
 - `--sem-publicar`: só monta a pasta, sem publicar
 
