@@ -62,9 +62,13 @@ const brlEn=v=>"R$ "+v.toFixed(2);
 // frete em dólar por pedido: FRETE[n-1] para n camisas; acima da lista é grátis
 const COTACAO={{COTACAO}}, FRETE={{FRETE}}, GRATIS=FRETE.length+1, freteUsd=n=>FRETE[n-1]||0, frete=n=>Math.round(freteUsd(n)*COTACAO*100)/100;
 // link da página do pedido: o pedido vai codificado no próprio link (base64url de [hash, tamanho, nome, número, qtd])
-function orderLink(ls){const bytes=new TextEncoder().encode(JSON.stringify(ls.map(l=>[l.h,l.size,l.nome||"",l.num||"",l.q,l.patch||0])));
-  const b=btoa(String.fromCharCode(...bytes)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
-  return new URL("pedido.html",location.href).href.split("#")[0]+"#p="+b}
+// formato curto: camisas separadas por "~", campos por "." (código.tamanho.qtd.patch.número.nome), sem os vazios do fim
+function orderLink(ls){
+  const enc=s=>encodeURIComponent(s).replace(/\./g,"%2E");
+  const p=ls.map(l=>{const f=[l.h,l.size,l.q,l.patch||0,l.num||"",enc(l.nome||"")];
+    while(f.length>2&&(f.at(-1)===""||f.at(-1)===0||(f.length==3&&f[2]==1)))f.pop();return f.join(".")}).join("~");
+  // onde o site tira o ".html" dos endereços (Cloudflare) o link fica /p; nos outros, /p.html
+  return new URL(location.pathname.endsWith(".html")?"p.html":"p",location.href).href.split("#")[0]+"#"+p}
 // só o link (fotos, tamanhos, nomes e números ficam na página do pedido), o frete e o total
 function message(ls,sub){const f=frete(cart.length);
   return ["📋 订单 Order: "+orderLink(ls),

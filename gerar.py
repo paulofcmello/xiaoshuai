@@ -117,6 +117,7 @@ def montar(saida, nome, whatsapp, cotacao, frete, cat, imagem=None, banner=None,
         sobrou = re.findall(r"\{\{[A-Z_]+\}\}", s)
         assert not sobrou, f"{p}: marcador sem valor {sobrou}"
         (saida / p).write_text(s)
+    shutil.copy(saida / "pedido.html", saida / "p.html")  # endereço curto do link do pedido
     # catalog.json inteiro: só a home clássica lê; fica na pasta (para gerar de novo) mas só vai pro ar com ela
     _json(saida / "catalog.json", [{k: x[k] for k in CAMPOS if k in x} for x in cat])
     dados(saida, cat)
