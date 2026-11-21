@@ -290,3 +290,4 @@ legend{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.0
 .persf input:focus{outline:0;border-color:var(--ink)}
 .pers p{color:var(--muted);font-size:12px;padding:8px 0 14px}
 .perstag{color:var(--red)!important;font-weight:600}
+.perkpers{cursor:pointer}.perkpers:hover,.perkpers:focus-visible{background:#E4E4E4}.perkpers:hover span{color:var(--red)}

@@ -6,7 +6,7 @@
 <title>Camisa — {{NOME}}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,900&family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="atacado.css?v=6">
+<link rel="stylesheet" href="atacado.css?v=7">
 </head>
 <body>
 <div class="strip" aria-hidden="true"><div id="strip"></div></div>
@@ -71,7 +71,7 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
         </form>
         <div class="perks">
           <p><b>${T("Entrega","配送","Delivery")}</b><span>${T("Até 7 dias úteis, todo o Brasil","7 个工作日内送达巴西全境","Within 7 business days, all of Brazil")}</span></p>
-          <p><b>${T("Personalização","定制","Customization")}</b><span>${T("Nome e número em 48 h","48 小时内印制名字和号码","Name and number in 48 h")}</span></p>
+          <p class="perkpers" role="button" tabindex="0"><b>${T("Personalização","定制","Customization")}</b><span>${T("Nome e número em 48 h","48 小时内印制名字和号码","Name and number in 48 h")} ›</span></p>
           <p><b>${T("Troca","退换","Exchange")}</b><span>${T("Troca de tamanho grátis em 7 dias","7 天内免费换码","Free size exchange within 7 days")}</span></p>
         </div>
       </div>
@@ -83,6 +83,9 @@ fetch("catalog.json").then(r=>r.json()).then(all=>{
   </div></section>`:""}`;
 
   const f=$("f"),add=$("add"),hint=$("hint"),pn=$("pnome"),pu=$("pnum");
+  // a linha "Personalização" das vantagens abre a mesma área de nome e número
+  const abrirPers=()=>{const d=document.querySelector(".pers");d.open=true;d.scrollIntoView({block:"center",behavior:"smooth"});pn.focus({preventScroll:true})};
+  const pk=document.querySelector(".perkpers");pk.onclick=abrirPers;pk.onkeydown=e=>{if(e.key=="Enter"||e.key==" "){e.preventDefault();abrirPers()}};
   // nome só com letras (vira maiúsculo), número só com 2 dígitos; o preço mostrado já soma a personalização
   const persv=()=>({nome:pn.value.replace(/[^\p{L} .'-]/gu,"").trim().toUpperCase().slice(0,12),num:pu.value.replace(/\D/g,"").slice(0,2)});
   f.addEventListener("input",e=>{if(e.target==pu)pu.value=pu.value.replace(/\D/g,"");const v=persv();document.querySelector(".big").textContent=reais(x.p+((v.nome||v.num)?PERS:0))});
