@@ -52,7 +52,7 @@
 
   function open() {
     el.hidden = false; render();
-    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("on")));
+    void el.offsetWidth; el.classList.add("on");  // reflow: a transição de entrada roda mesmo sem quadros de animação
     document.documentElement.style.overflow = "hidden";
     el.querySelector(".dclose").focus();
     if (!byH) fetch("catalog.json").then(r => r.json()).then(all => { byH = {}; all.forEach(x => byH[x.h] = x); render() });
