@@ -30,7 +30,7 @@
   <div class="legal">© {{NOME}} · Mockup de demonstração · Demo · 演示样稿</div>
 </div></footer>
 
-<script src="dados.js?v=1"></script>
+<script src="dados.js?v=2"></script>
 <script>
 const WA="https://wa.me/{{WA}}";
 try{const q=new URLSearchParams(location.search).get("lang");if(["pt","en","zh"].includes(q))localStorage.lang=q}catch{}
@@ -72,8 +72,8 @@ function orderLink(ls){
 // só o link (fotos, tamanhos, nomes e números ficam na página do pedido), o frete e o total
 function message(ls,sub){const f=frete(cart.length);
   return ["📋 订单 Order: "+orderLink(ls),
-    `运费 Shipping: ${f?brlEn(f):"免运费 Free"}`,
-    `合计 Total: ${brlEn(sub+f)}`].join("\n");
+    SEM_PRECO?(f?"":"运费 Shipping: 免运费 Free"):`运费 Shipping: ${f?brlEn(f):"免运费 Free"}`,
+    SEM_PRECO?"":`合计 Total: ${brlEn(sub+f)}`].filter(Boolean).join("\n");
 }
 
 function render(){
@@ -86,15 +86,15 @@ function render(){
         <a href="camisa.html?id=${x.h}"><img src="fotos/all/${x.h}.webp" alt="${x.t}" width="96" height="96"></a>
         <div><h2><a href="camisa.html?id=${x.h}">${T(x.t,x.tz,x.te)}</a></h2><p>${[T(x.q,x.qz,x.qe),T("Tamanho","尺码","Size")+" "+l.size].filter(Boolean).join(" · ")}</p>${pers(l)||l.patch?`<p class="perstag">${persTxt(l)}</p>`:""}
           <div class="qty"><button data-a="-" data-k="${l.k}" aria-label="${T("Diminuir","减少","Decrease")}">−</button><output>${l.q}</output><button data-a="+" data-k="${l.k}" aria-label="${T("Aumentar","增加","Increase")}">+</button></div></div>
-        <div class="right">${brl(preco(l)*l.q)}<button class="rm" data-a="x" data-k="${l.k}">${T("Remover","删除","Remove")}</button></div>
+        <div class="right">${SEM_PRECO?"":brl(preco(l)*l.q)}<button class="rm" data-a="x" data-k="${l.k}">${T("Remover","删除","Remove")}</button></div>
       </div>`}).join("")}</div>
     <aside class="summary">
-      <div class="row"><span>${T("Camisas","球衣","Shirts")} (${cart.length})</span><span>${brl(sub)}</span></div>
-      <div class="row"><span>${T("Frete","运费","Shipping")}</span><span>${f?brl(f):T("Grátis","免运费","Free")}</span></div>
+      ${SEM_PRECO?`<div class="row"><span>${T("Camisas","球衣","Shirts")}</span><span>${cart.length}</span></div>`:`<div class="row"><span>${T("Camisas","球衣","Shirts")} (${cart.length})</span><span>${brl(sub)}</span></div>`}
+      ${SEM_PRECO&&f?"":`<div class="row"><span>${T("Frete","运费","Shipping")}</span><span>${f?brl(f):T("Grátis","免运费","Free")}</span></div>`}
       ${cart.length<GRATIS?`<p class="note" style="min-height:0;margin:0 0 4px">${T(`Frete grátis a partir de ${GRATIS} camisas`,`满 ${GRATIS} 件免运费`,`Free shipping from ${GRATIS} shirts`)}</p>`:""}
       ${!PERS&&cart.some(pers)?`<p class="note" style="min-height:0;margin:0 0 4px">${T("O valor da personalização é combinado no WhatsApp.","定制费用在 WhatsApp 上确认。","Customization price is confirmed on WhatsApp.")}</p>`:""}
       ${cart.some(c=>c.patch)?`<p class="note" style="min-height:0;margin:0 0 4px;color:var(--red)">${T("Depois de enviar o pedido, mande no WhatsApp uma foto do patch que você quer.","发送订单后，请在 WhatsApp 上发一张你要的臂章图片。","After sending the order, send a photo of the patch you want on WhatsApp.")}</p>`:""}
-      <div class="row total"><span>${T("Total","合计","Total")}</span><b>${brl(total)}</b></div>
+      ${SEM_PRECO?"":`<div class="row total"><span>${T("Total","合计","Total")}</span><b>${brl(total)}</b></div>`}
       <a class="btn wa" id="wa" href="${WA}?text=${encodeURIComponent(message(ls,sub))}" target="_blank" rel="noopener">${T("Falar com fornecedor","联系供应商","Message the seller")}</a>
       <p class="note">${T("Abre o WhatsApp com seu pedido já escrito. É só enviar.","将打开 WhatsApp，订单已自动填写，直接发送即可。","Opens WhatsApp with your order already written. Just hit send.")}</p>
     </aside></div>`;
@@ -110,6 +110,6 @@ document.addEventListener("click",e=>{const b=e.target.closest("button[data-a]")
 
 Dados.itens(cart.map(c=>c.h)).then(m=>{byH=m;cart=cart.filter(c=>byH[c.h]);render()});
 </script>
-<script src="busca.js?v=3"></script>
+<script src="busca.js?v=4"></script>
 </body>
 </html>

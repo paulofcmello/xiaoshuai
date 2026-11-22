@@ -73,6 +73,21 @@ def scrape(url, paginas=None):
     return items
 
 
+def categorias(url, maximo=30):
+    """Links das categorias da loja no Yupoo; lista vazia se a loja não usa categorias."""
+    u = urlparse(url if "//" in url else "https://" + url)
+    m = re.match(r"/photos/([^/?#]+)", u.path)
+    host = f"{m.group(1)}.x.yupoo.com" if u.netloc == "x.yupoo.com" and m else u.netloc
+    if host == "x.yupoo.com":
+        return []
+    try:
+        page = _get(f"https://{host}/categories").decode("utf-8", "replace")
+    except Exception:  # loja sem página de categorias
+        return []
+    ids = list(dict.fromkeys(re.findall(r'href="/categories/(\d+)', page)))[:maximo]
+    return [f"https://{host}/categories/{i}" for i in ids]
+
+
 def download(items, outdir, workers=16):
     if not shutil.which("cwebp"):
         raise RuntimeError("cwebp não encontrado. Instale com: brew install webp")

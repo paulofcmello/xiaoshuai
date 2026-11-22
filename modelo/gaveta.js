@@ -41,15 +41,15 @@
         <a href="camisa.html?id=${x.h}"><img src="fotos/all/${x.h}.webp" alt="" width="72" height="72"></a>
         <div><h3><a href="camisa.html?id=${x.h}">${T(x.t, x.tz, x.te)}</a></h3>
           <p>${[T(x.q, x.qz, x.qe), l.size].filter(Boolean).join(" · ")}</p>${pers(l) || l.patch ? `<p class="perstag">${persTxt(l)}</p>` : ""}
-          <p class="pr">${brl(preco(l))}</p>
+          ${SEM_PRECO ? "" : `<p class="pr">${brl(preco(l))}</p>`}
           <div class="dact"><div class="dqty"><button data-a="-" data-k="${k}" aria-label="${T("Diminuir", "减少", "Decrease")}">−</button><output>${l.q}</output><button data-a="+" data-k="${k}" aria-label="${T("Aumentar", "增加", "Increase")}">+</button></div>
           <button class="dtrash" data-a="x" data-k="${k}" aria-label="${T("Remover", "删除", "Remove")}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div>
         </div>
-        <b class="dsum">${brl(preco(l) * l.q)}</b>
+        ${SEM_PRECO ? "" : `<b class="dsum">${brl(preco(l) * l.q)}</b>`}
       </div>` }).join("")}</div>
       <div class="dfoot">
-        <div class="dtot"><span>${T("Total estimado", "预计合计", "Estimated total")}</span><b>${brl(sub)}</b></div>
-        <p>${T("Frete calculado na próxima etapa.", "运费在下一步计算。", "Shipping is calculated in the next step.")}</p>
+        ${SEM_PRECO ? "" : `<div class="dtot"><span>${T("Total estimado", "预计合计", "Estimated total")}</span><b>${brl(sub)}</b></div>
+        <p>${T("Frete calculado na próxima etapa.", "运费在下一步计算。", "Shipping is calculated in the next step.")}</p>`}
         <a class="btn" href="carrinho.html">${T("Finalizar compra", "去结算", "Checkout")}</a>
       </div>`;
   }

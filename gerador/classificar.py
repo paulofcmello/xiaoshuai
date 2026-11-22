@@ -45,7 +45,7 @@ QUAL_RE = {
 RAW = """
 @brasileirao
 Flamengo = fla, 弗拉门戈
-Fluminense = fluminen, minense, fruimense, 弗鲁米嫩塞
+Fluminense = fluminen, minense, fruimense, flumimense, 弗鲁米嫩塞
 Palmeiras = 帕尔梅拉斯
 Corinthians = 科林蒂安
 São Paulo = sao paulo, 圣保罗
@@ -83,7 +83,7 @@ Náutico = nautico
 Arsenal = 阿森纳, gunners
 Aston Villa = villa, 阿斯顿维拉
 Chelsea = 切尔西
-Liverpool = 利物浦, 利物普
+Liverpool = 利物浦, 利物普, 利物
 Manchester City = man city, mancity, man c, 曼城
 Manchester United = man u, ma u, manu, m u, man utd, man united, manchester utd, 曼联
 Tottenham = spurs, tottenham hotspur, 热刺
@@ -142,7 +142,7 @@ Stockport County = stockport
 Lincoln City = lincoln
 Peterborough United = peterborough
 @laliga
-Real Madrid = real madrid, madrid, 皇马, 皇家马德里
+Real Madrid = real madrid, madrid, 皇马, 皇家马德里, 皇西马
 Barcelona = barca, 巴萨, 巴塞罗那
 Atlético de Madrid = atletico madrid, atletico de madrid, atletico, atleti, 马竞, 马德里竞技
 Sevilla = seville, 塞维利亚
@@ -355,15 +355,17 @@ Sporting Kansas City = sporting kansas city
 Austin FC = austin fc
 @saudi
 Al Hilal = hilal, new moon, 新月
-Al Nassr = nassr, 利雅得胜利, 胜利
-Al Ittihad = ittihad, 吉达联合
-Al Ahli = al ahli, ahli saudi, 吉达国民
+Al Nassr = nassr, 利雅得胜利, 利雅得胜, 胜利
+Al Ittihad = ittihad, 吉达联合, 吉达
+Al Ahli = al ahli, ahli saudi, 吉达国民, 吉达国米
 Al Shabab = al shabab
 Al Ettifaq = ettifaq
 Al Fateh = al fateh
 Al Qadsiah = qadsiah
 Saudi Club = saudi club, saudi
 @outras-ligas
+AD Ceuta = ceuta
+Palestino = cd palestino, palestino
 Ajax = 阿贾克斯
 PSV = psv eindhoven, 埃因霍温
 Feyenoord = 费耶诺德
@@ -728,6 +730,37 @@ Cabo Verde = 佛得角, 弗得角, 佛拉角
 País de Gales = 威尔士
 Espanha = 西班
 Japão = 日本
+@nba
+Atlanta Hawks = atlanta hawks, hawks, 老鹰
+Boston Celtics = boston celtics, celtics, 凯尔特人队, 绿军
+Brooklyn Nets = brooklyn nets, nets, 篮网
+Charlotte Hornets = charlotte hornets, hornets, hornet, 黄蜂
+Chicago Bulls = chicago bulls, 公牛
+Cleveland Cavaliers = cleveland cavaliers, cavaliers, cavs, 骑士
+Dallas Mavericks = dallas mavericks, mavericks, mavs, 独行侠, 小牛
+Denver Nuggets = denver nuggets, nuggets, 掘金
+Detroit Pistons = detroit pistons, pistons, 活塞
+Golden State Warriors = golden state warriors, golden state, warriors, 勇士
+Houston Rockets = houston rockets, rockets, 火箭
+Indiana Pacers = indiana pacers, pacers, 步行者
+Los Angeles Clippers = los angeles clippers, la clippers, clippers, 快船
+Los Angeles Lakers = los angeles lakers, la lakers, lakers, 湖人
+Memphis Grizzlies = memphis grizzlies, grizzlies, 灰熊
+Miami Heat = miami heat, 热火
+Milwaukee Bucks = milwaukee bucks, bucks, 雄鹿
+Minnesota Timberwolves = minnesota timberwolves, timberwolves, 森林狼
+New Orleans Pelicans = new orleans pelicans, pelicans, 鹈鹕
+New York Knicks = new york knicks, knicks, 尼克斯
+Oklahoma City Thunder = oklahoma city thunder, okc thunder, 雷霆
+Orlando Magic = orlando magic, 魔术
+Philadelphia 76ers = philadelphia 76ers, 76ers, sixers, 76人
+Phoenix Suns = phoenix suns, suns, 太阳
+Portland Trail Blazers = portland trail blazers, trail blazers, blazers, 开拓者
+Sacramento Kings = sacramento kings, 国王队
+San Antonio Spurs = san antonio spurs, 马刺
+Toronto Raptors = toronto raptors, raptors, 猛龙
+Utah Jazz = utah jazz, 爵士
+Washington Wizards = washington wizards, wizards, 奇才
 """
 
 _CJK = r"一-鿿"
@@ -862,11 +895,15 @@ def _build(title, n, league, forced_retro=False):
         main = (f"{bottom[0]} {side[0]}" if side else bottom[0], (side[1] if side else "") + bottom[1],
                 (side[2] + " " if side else "") + bottom[2])
     qs = [(pt, zh, k.title()) for k, pt, zh in QUAL if qual[k]]
+    num = ""
+    if league == "nba":  # camisa de basquete se distingue pelo número do jogador
+        m = re.search(r"#\s*(\d{1,2})(?!\d)|(?<!\d)(\d{1,2})\s*号", title)
+        num = f" #{m[1] or m[2]}" if m else ""
     return {
-        "n": n, "l": "retro" if retro else league,
-        "t": f"{main[0]} {n}" + (f" {season}" if season else ""),
-        "tz": f"{n} " + (season + " " if season else "") + main[1],
-        "te": f"{n} " + (season + " " if season else "") + main[2],
+        "n": n, "l": "retro" if retro and league not in ("nba", "treino") else league,
+        "t": f"{main[0]} {n}" + (f" {season}" if season else "") + num,
+        "tz": f"{n} " + (season + " " if season else "") + main[1] + num,
+        "te": f"{n} " + (season + " " if season else "") + main[2] + num,
         "q": " · ".join(q[0] for q in qs), "qz": " · ".join(q[1] for q in qs), "qe": " · ".join(q[2] for q in qs),
         "s": _sizes(title, kids),
         **({"sh": 1} if bottom else {}),  # short/calça fica fora da vitrine da home
@@ -890,13 +927,25 @@ def _clean(title):
     return s or "Outros"
 
 
+# sem time conhecido: basquete vai para NBA; marca esportiva/peça de treino vai para "treino"
+NBA_RE = r"nba|basketball|city (edition|version)|篮球|全明星|all ?star"
+TREINO_RE = (r"nike|nk|adidas|ad|jordan|乔丹|飞人|耐克|阿迪|三叶草?|under ?armour|安德玛|the north face|tnf|北面|on running|昂跑|"
+             r"puma|彪马|new balance|新百伦|lululemon|迪桑特|descente|始祖鸟|arc ?teryx|salomon|萨洛蒙|hoka|asics|亚瑟士|安踏|李宁|"
+             r"t ?shirt|短袖|长袖|风衣|棉衣|羽绒\w*|卫衣|马甲|速干|紧身|运动|训练|背心|外套|夹克|衬衫|track ?(top|suit)|"
+             r"jackets?|windbreakers?|hoodies?|shorts|pants|短裤|长裤|裤")
+CLUBE_RE = r"home|away|third|主场|客场|球衣"  # camisa de time que o classificador não reconheceu: fica em "outros"
+CODIGO_RE = r"\s*[A-Z]{1,3}\d{2,5}\s*[#款:]?\s*[" + _CJK + r"]"  # "A2803白沙黑": código de modelo + cor
+
+
 def classify_all(items):
     """Classify every item ({'t','img','h'}); unknown ones become league 'outros' (or 'retro')."""
     out = []
     for it in items:
         c = classify(it["t"])
         if c is None:
-            c = _build(it["t"], _clean(it["t"]), "outros")
+            t = _kit(it["t"])
+            lg = "nba" if _has(NBA_RE, t) else "treino" if (_has(TREINO_RE, t) and not _has(CLUBE_RE, t)) or re.match(CODIGO_RE, it["t"]) else "outros"
+            c = _build(it["t"], _clean(it["t"]), lg)
         out.append({**c, "h": it["h"]})
     return out
 
@@ -921,4 +970,10 @@ if __name__ == "__main__":
     assert t("26-27AC主S一2XL")["n"] == "AC Milan"
     assert t("26-27巴塞特别版S一2XL")["n"] == "Barcelona"
     assert t("球员26.27阿尔及利亚客S一2XL")["n"] == "Argélia"
+    assert t("26-27利雅得胜训练服S一3XL")["n"] == "Al Nassr"
+    assert t("球员:25-26吉达训练服")["n"] == "Al Ittihad"
+    assert t("26.S一2XL皇西马甲125周年版")["n"] == "Real Madrid"
+    assert classify_all([{"t": "Mens AD Ceuta FC 2025/26 Home Jersey", "h": "x"}])[0]["l"] == "outras-ligas"
+    assert classify_all([{"t": "Adidas 2023/24 Away Jersey", "h": "x"}])[0]["l"] == "outros"
+    assert classify_all([{"t": "Nike #1044 白色 T-shirt", "h": "x"}])[0]["l"] == "treino"
     print("ok")

@@ -35,7 +35,7 @@
   <div class="legal">© {{NOME}} · Mockup de demonstração · Demo · 演示样稿</div>
 </div></footer>
 
-<script src="dados.js?v=1"></script>
+<script src="dados.js?v=2"></script>
 <script>
 try{const q=new URLSearchParams(location.search).get("lang");if(["pt","en","zh"].includes(q))localStorage.lang=q}catch{}
 const lg=(()=>{try{return localStorage.lang||"pt"}catch{return"pt"}})();
@@ -71,7 +71,7 @@ Dados.home().then(h=>{
   return Dados.liga(k);
 }).then(d=>{lista=d;mais()}).catch(()=>{$("lg").innerHTML=`<p class="snote">${T("Não foi possível carregar. Tente de novo.","加载失败，请重试。","Could not load. Please try again.")}</p>`});
 </script>
-<script src="gaveta.js?v=5"></script>
-<script src="busca.js?v=3"></script>
+<script src="gaveta.js?v=6"></script>
+<script src="busca.js?v=4"></script>
 </body>
 </html>

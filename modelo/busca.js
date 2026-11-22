@@ -24,7 +24,7 @@
   document.body.append(el);
   const q = el.querySelector("#sq"), body = el.querySelector(".sbody"), clear = el.querySelector(".sclear");
 
-  const card = x => `<a class="sitem" href="camisa.html?id=${x.h}"><img src="fotos/all/${x.h}.webp" alt="" loading="lazy" width="440" height="440"><span>${T(x.t, x.tz, x.te)}</span><b>R$ ${x.p}</b></a>`;
+  const card = x => `<a class="sitem" href="camisa.html?id=${x.h}"><img src="fotos/all/${x.h}.webp" alt="" loading="lazy" width="440" height="440"><span>${T(x.t, x.tz, x.te)}</span>${SEM_PRECO ? "" : `<b>R$ ${x.p}</b>`}</a>`;
 
   function render() {
     if (!all) { body.innerHTML = `<p class="snote">${T("Carregando…", "加载中…", "Loading…")}</p>`; return }

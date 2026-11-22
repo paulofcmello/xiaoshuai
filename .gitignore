@@ -6,3 +6,10 @@ sites/
 gerador/_test_*
 shots/
 .taste-skill/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example

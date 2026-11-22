@@ -73,7 +73,7 @@ function showcase(){
   m.innerHTML=h.map(tile).join("");
   document.getElementById("duo").innerHTML=pick(["portugal","selecoes","retro","outros","premier","laliga","seriea"],2,used).map(tile).join("");
 }
-const L={brasileirao:["Brasileirão","巴西甲级联赛"],premier:["Premier League","英超"],laliga:["La Liga","西甲"],seriea:["Serie A","意甲"],bundesliga:["Bundesliga","德甲"],ligue1:["Ligue 1","法甲"],portugal:["Liga Portugal","葡超"],argentina:["Argentina","阿根廷联赛"],"liga-mx":["Liga MX","墨西哥联赛"],mls:["MLS","美职联"],saudi:["Saudi Pro League","沙特联赛"],"outras-ligas":["Outras ligas","其他联赛","Other leagues"],selecoes:["Seleções","国家队","National teams"],retro:["Retrô","复古球衣","Retro"],outros:["Outros","其他","Other"]};
+const L={brasileirao:["Brasileirão","巴西甲级联赛"],premier:["Premier League","英超"],laliga:["La Liga","西甲"],seriea:["Serie A","意甲"],bundesliga:["Bundesliga","德甲"],ligue1:["Ligue 1","法甲"],portugal:["Liga Portugal","葡超"],argentina:["Argentina","阿根廷联赛"],"liga-mx":["Liga MX","墨西哥联赛"],mls:["MLS","美职联"],saudi:["Saudi Pro League","沙特联赛"],"outras-ligas":["Outras ligas","其他联赛","Other leagues"],selecoes:["Seleções","国家队","National teams"],nba:["NBA","NBA","NBA"],treino:["Roupas de treino","训练服装","Training wear"],retro:["Retrô","复古球衣","Retro"],outros:["Outros","其他","Other"]};
 let data=[];showcase();const cart=(()=>{try{return JSON.parse(localStorage.cart||"[]")}catch{return[]}})();document.getElementById("count").textContent=cart.length;const fmt=n=>n.toLocaleString("pt-BR");
 const pl=x=>(x.qe||"").split(" · ").includes("Player");
 function render(){

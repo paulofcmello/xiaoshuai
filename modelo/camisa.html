@@ -27,7 +27,7 @@
   <div class="legal">© {{NOME}} · Mockup de demonstração · Demo · 演示样稿</div>
 </div></footer>
 
-<script src="dados.js?v=1"></script>
+<script src="dados.js?v=2"></script>
 <script>
 try{const q=new URLSearchParams(location.search).get("lang");if(["pt","en","zh"].includes(q))localStorage.lang=q}catch{}
 const lg=(()=>{try{return localStorage.lang||"pt"}catch{return"pt"}})();
@@ -61,16 +61,16 @@ Promise.all([Dados.itens([id||""]),Dados.home().catch(()=>({c:{},p:{}}))]).then(
       <div class="buy">
         <h1>${T(x.t,x.tz,x.te)}</h1>
         <p class="kit">${T(x.q,x.qz,x.qe)||(x.t.startsWith("Camisa")?T("Versão torcedor","球迷版","Fan version"):"")}</p>
-        <p class="big">R$ ${x.p}</p>
+        ${SEM_PRECO?"":`<p class="big">R$ ${x.p}</p>`}
         <form id="f">
           <fieldset><legend>${T("Tamanho","尺码","Size")}<span id="sel" style="color:var(--muted);font-weight:500"></span></legend>
           <div class="sizes">${x.s.map(s=>`<label><input type="radio" name="size" value="${s}"><span>${s}</span></label>`).join("")}</div></fieldset>
-          <details class="pers"><summary>${T("Personalizar com nome e número","印名字和号码","Add name and number")} <small>${PERS?"+ "+reais(PERS):T("valor a combinar","费用另议","price to confirm")} · ${T("opcional","可选","optional")}</small></summary>
-            <div class="persf"><label>${T("Nome","名字","Name")}<input id="pnome" maxlength="12" autocomplete="off" placeholder="${T("Ex.: SILVA","例如：SILVA","E.g. SILVA")}"></label>
+          <details class="pers"><summary>${T("Personalizar com nome e número","印名字和号码","Add name and number")} <small>${SEM_PRECO?"":(PERS?"+ "+reais(PERS):T("valor a combinar","费用另议","price to confirm"))+" · "}${T("opcional","可选","optional")}</small></summary>
+            <div class="persf"><label>${T("Nome","名字","Name")}<input id="pnome" maxlength="12" autocomplete="off" placeholder="${T("Ex.: NEYMAR JR","例如：NEYMAR JR","E.g. NEYMAR JR")}"></label>
             <label>${T("Número","号码","Number")}<input id="pnum" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="10"></label></div>
             <p>${T("Deixe em branco se não quiser personalizar.","不需要定制请留空。","Leave blank if you don't want it.")}</p></details>
           ${PATCH?`<fieldset class="patch"><legend>${T("Tem patch?","要臂章吗？","Add a patch?")}</legend>
-            <div class="sizes">${[0,1,2,3,4].map(n=>[n,n?`${n} patch${n>1?"es":""} · + ${reais(n*PATCH)}`:T("Não","不要","No")]).map(([n,t])=>`<label><input type="radio" name="patch" value="${n}"${n?"":" checked"}><span>${t}</span></label>`).join("")}</div>
+            <div class="sizes">${[0,1,2,3,4].map(n=>[n,n?`${n} patch${n>1?"es":""}${SEM_PRECO?"":` · + ${reais(n*PATCH)}`}`:T("Não","不要","No")]).map(([n,t])=>`<label><input type="radio" name="patch" value="${n}"${n?"":" checked"}><span>${t}</span></label>`).join("")}</div>
             <p class="patchnote" hidden>${T("Depois de fazer o pedido, mande no WhatsApp uma foto do patch que você quer.","下单后，请在 WhatsApp 上发一张你要的臂章图片。","After ordering, send a photo of the patch you want on WhatsApp.")}</p></fieldset>`:""}
           <button class="btn primary addbtn" id="add" aria-disabled="true" aria-describedby="hint">${T("Adicionar ao carrinho","加入购物车","Add to cart")}</button>
           <p class="hint" id="hint" aria-live="polite">${T("Escolha um tamanho para continuar","请先选择尺码","Choose a size to continue")}</p>
@@ -123,7 +123,7 @@ Promise.all([Dados.itens([id||""]),Dados.home().catch(()=>({c:{},p:{}}))]).then(
   }
 });
 </script>
-<script src="gaveta.js?v=5"></script>
-<script src="busca.js?v=3"></script>
+<script src="gaveta.js?v=6"></script>
+<script src="busca.js?v=4"></script>
 </body>
 </html>

@@ -87,7 +87,7 @@
   <div class="legal">© {{NOME}} · Mockup de demonstração · Demo · 演示样稿</div>
 </div></footer>
 
-<script src="dados.js?v=1"></script>
+<script src="dados.js?v=2"></script>
 <script>
 let lg="pt";const T=(pt,cn,en)=>lg=="zh"?cn:lg=="en"?(en??pt):pt;
 const hero={{HERO}};
@@ -140,7 +140,7 @@ document.getElementById("lang").onclick=()=>setLang(NEXT[lg]);
 try{const q=new URLSearchParams(location.search).get("lang");if(NEXT[q])localStorage.lang=q}catch{}
 try{if(NEXT[localStorage.lang]&&localStorage.lang!="pt")setLang(localStorage.lang)}catch{}
 </script>
-<script src="gaveta.js?v=5"></script>
-<script src="busca.js?v=3"></script>
+<script src="gaveta.js?v=6"></script>
+<script src="busca.js?v=4"></script>
 </body>
 </html>
